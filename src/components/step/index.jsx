@@ -4,6 +4,7 @@ import { warn } from '../../lib/logger';
 class HalcyonStep extends ReactComponent {
   constructor () {
     super();
+    this.state = {};
   }
 
   render () {

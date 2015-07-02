@@ -47,11 +47,9 @@ class HalcyonNavigation extends ReactComponent {
     return (
       <div className='halcyon__navigation'>
         <nav className='navbar navbar-static-top'>
-          <div className='container'>
-            <ul className='nav nav-tabs'>
-              {this.renderStepTabs()}
-            </ul>
-          </div>
+          <ul className='nav nav-tabs'>
+            {this.renderStepTabs()}
+          </ul>
         </nav>
       </div>
     );

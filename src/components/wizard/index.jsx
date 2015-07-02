@@ -106,6 +106,18 @@ class HalcyonWizard extends ReactComponent {
     this.attemptToNavigateToIndex(idx);
   }
 
+  renderViewport () {
+    const StepComponent = this.props.steps[this.state.currentStepIndex];
+
+    return (
+      <div className='row'>
+        <div className='col-xs-12'>
+          <StepComponent ref='step' model={this.state.model} />
+        </div>
+      </div>
+    );
+  }
+
   render () {
     return (
       <div className='halcyon'>
@@ -113,8 +125,8 @@ class HalcyonWizard extends ReactComponent {
                               disabled={this.props.disabled}
                               activeStepIndex={this.state.currentStepIndex}
                               onChange={::this.onNavigationChange} />
-        <div className='container halcyon__viewport'>
-          <h1>On step: {this.state.currentStepIndex}</h1>
+                            <div className='halcyon__viewport'>
+          {this.renderViewport()}
         </div>
       </div>
     );
