@@ -7,7 +7,7 @@ import {
   HALCYON_WIZARD_SUBMIT_FINISH,
   HALCYON_WIZARD_SUBMIT_SUCCESS,
   HALCYON_WIZARD_SUBMIT_ERROR
-} from '../constants/wizard';
+} from '../constants';
 
 export default {
 

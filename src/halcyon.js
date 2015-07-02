@@ -1,13 +1,9 @@
-import { warn } from './lib/logger';
-import { registerWithDispatcher, getDispatcher } from './configure-dispatcher';
-
-const Wizard = require('./components/wizard/index.jsx'),
-      Step   = require('./components/step/index.jsx'),
-      Store  = require('./stores/halcyon');
+import { registerWithDispatcher } from './configure-dispatcher';
 
 export default {
-  Wizard,
-  Step,
-  Store,
+  Actions : require('./actions'),
+  Step    : require('./components/step/index.jsx'),
+  Store   : require('./stores'),
+  Wizard  : require('./components/wizard/index.jsx'),
   registerWithDispatcher
 };

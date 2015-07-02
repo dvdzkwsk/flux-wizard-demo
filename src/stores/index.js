@@ -9,7 +9,7 @@ import {
   HALCYON_WIZARD_SUBMIT_FINISH,
   HALCYON_WIZARD_SUBMIT_SUCCESS,
   HALCYON_WIZARD_SUBMIT_ERROR
-} from '../constants/wizard';
+} from '../constants';
 
 const HALCYON_CHANGE_EVENT = 'HALCYON_CHANGE_EVENT';
 const ACTIVE_WIZARDS = new WeakMap();

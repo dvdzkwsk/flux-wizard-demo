@@ -1,7 +1,6 @@
 import { warn } from './lib/logger';
-import HalcyonStore from './stores/halcyon';
-
-var configuredDispatcher = undefined;
+import HalcyonStore from './stores';
+var configuredDispatcher;
 
 export default {
   registerWithDispatcher : (dispatcher) => {

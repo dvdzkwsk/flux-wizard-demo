@@ -2,7 +2,7 @@ import React, { Component as ReactComponent } from 'react';
 import HalcyonNavigationBar from '../navigation';
 import HalcyonStep from '../step';
 import HalcyonActions from '../../actions';
-import HalcyonStore from '../../stores/halcyon';
+import HalcyonStore from '../../stores';
 import { warn } from '../../lib/logger';
 
 class HalcyonWizard extends ReactComponent {
