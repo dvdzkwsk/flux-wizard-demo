@@ -1,6 +1,6 @@
 Halcyon
 -------
-A lightweight, Flux-oriented Wizard platform for React. Wizards and steps provide clean life cycle hooks, and the flux stores are designed to support concurrent (nested) wizards.
+A lightweight Flux-based Wizard platform for React. Wizards and steps provide clean life cycle hooks, and the Flux stores are designed to support concurrent (nested) wizards.
 
 Requirements
 ------------
@@ -85,7 +85,13 @@ Called on the tick before a step is exited; at this point the navigation can no 
 Flux Action Creators
 --------------------
 
-
 TODO
 ----
+* Document wizard properties (steps, model, etc.)
+* Document action creators
+* Wizard setup actions (async model loading)
+* Wizard submission actions
+* Wizard exit/cancel actions
 * /dist version that's already transpiled
+* Step animations?
+* Default dispatcher that can be used if a dispatcher isn't registered?
