@@ -4,7 +4,7 @@ A lightweight Flux-based Wizard platform for React. Wizards and steps provide cl
 
 Requirements
 ------------
-* React ^0.13.0
+* React `^0.13.0`
 * ES6 (with ES7 flags enabled) transpiler until this package bundles a dist vesion.
 
 Getting Started
@@ -85,6 +85,10 @@ Called on the tick before a step is exited; at this point the navigation can no 
 Flux Action Creators
 --------------------
 
+Example Wizard
+--------------
+Halcyon currently comes pre-packaged with an example wizard implementation. Make sure all `devDepencies`. After cloning the repo and running `npm install`, run the webpack dev server with `npm run dev` and check it out at `http://localhost:3000`.
+
 TODO
 ----
 * Document wizard properties (steps, model, etc.)
@@ -95,3 +99,4 @@ TODO
 * /dist version that's already transpiled
 * Step animations?
 * Default dispatcher that can be used if a dispatcher isn't registered?
+* Host and link to example wizard
