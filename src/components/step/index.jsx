@@ -7,6 +7,14 @@ class HalcyonStep extends ReactComponent {
     this.state = {};
   }
 
+  shouldStepExit () {
+    return true;
+  }
+
+  stepWillExit () {
+    warn('Life Cycle Method .stepWillExit() not implemented.');
+  }
+
   render () {
     warn('Abstract method HalcyonStep.render() not implemented.');
   }

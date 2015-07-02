@@ -86,7 +86,7 @@ class HalcyonWizard extends ReactComponent {
   // ------------------------
   // [Number] Target Step Index
   attemptToNavigateToIndex (idx) {
-    if (this.shouldWizardNavigate()) {
+    if (this.shouldWizardNavigate() && this.refs.step.shouldStepExit()) {
       this.navigateToIndex(idx);
     }
   }
@@ -96,6 +96,7 @@ class HalcyonWizard extends ReactComponent {
   // [Number] Target Step Index
   navigateToIndex (idx) {
     this.wizardWillNavigate(idx);
+    this.refs.step.stepWillExit();
     HalcyonActions.navigateToIndex(this, idx);
   }
 
