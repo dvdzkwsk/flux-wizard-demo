@@ -8,35 +8,45 @@ import { warn } from '../../lib/logger';
 class HalcyonWizard extends ReactComponent {
   constructor () {
     super();
-    this._name = this.title || this.name;
-    this.state = {
-      currentStepIndex : 0
-    };
+    this.state = {};
   }
 
+  // Check to see if this wizard already exists, and if so update internal
+  // state to match the flux store. If this type of wizard doesn't already
+  // exist, create a new one in the store.
   componentWillMount () {
-    HalcyonActions.create(this._name);
     HalcyonStore.addChangeListener(::this.handleStoreUpdate);
+    HalcyonActions.create(this);
   }
 
   componentDidUnmount () {
-    HalcyonStore.destroy(this._name);
+    HalcyonStore.destroy(this);
     HalcyonStore.removeChangeListener(::this.handleStoreUpdate);
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    if (prevState.currentStepIndex !== this.state.currentStepIndex) {
+      this.wizardDidNavigate();
+    }
   }
 
   // ----------------------------------
   // Store Update Handler
   // ----------------------------------
   handleStoreUpdate () {
+    this.setState(this.getStateFromStore());
+  }
+
+  getStateFromStore () {
     const {
       model,
       currentStepIndex
-    } = HalcyonStore.getWizardStateFor(this._name);
+    } = HalcyonStore.getStateFor(this);
 
-    this.setState({
+    return {
       model : model,
       currentStepIndex : currentStepIndex
-    });
+    };
   }
 
   // ----------------------------------
@@ -77,7 +87,7 @@ class HalcyonWizard extends ReactComponent {
   // [Number] Target Step Index
   attemptToNavigateToIndex (idx) {
     if (this.shouldWizardNavigate()) {
-      HalcyonActions.navigateToIndex(this._name, idx);
+      this.navigateToIndex(idx);
     }
   }
 
@@ -85,7 +95,8 @@ class HalcyonWizard extends ReactComponent {
   // ------------------------
   // [Number] Target Step Index
   navigateToIndex (idx) {
-    this.wizardWillNavigate(this.props.activeStepIndex, idx);
+    this.wizardWillNavigate(idx);
+    HalcyonActions.navigateToIndex(this, idx);
   }
 
   // Handler that receives change events from the Navigation component.
@@ -96,12 +107,10 @@ class HalcyonWizard extends ReactComponent {
   }
 
   render () {
-    const disableNavigation = this.props.disabled;
-
     return (
       <div className='halcyon'>
         <HalcyonNavigationBar steps={this.props.steps}
-                              disabled={disableNavigation}
+                              disabled={this.props.disabled}
                               activeStepIndex={this.state.currentStepIndex}
                               onChange={::this.onNavigationChange} />
         <div className='container halcyon__viewport'>
