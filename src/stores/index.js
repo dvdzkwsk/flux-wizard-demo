@@ -19,27 +19,31 @@ class HalcyonStore extends EventEmitter {
     super();
   }
 
+  unregisterDispatcher (dispatcher) {
+    dispatcher.unregister(this.dispatchToken);
+  }
+
   registerWithDispatcher (dispatcher) {
-    const self = this;
+    this.dispatchToken = dispatcher.register(::this.handleDispatch);
+  }
 
-    this.dispatchToken = dispatcher.register(function (action) {
-      const { actionType, payload } = action;
+  handleDispatch (action) {
+    const { actionType, payload } = action;
 
-      switch (actionType) {
-        case HALCYON_WIZARD_CREATE:
-          self.create(payload.instance);
-          self.emitChange();
-          break;
-        case HALCYON_WIZARD_DESTROY:
-          self.destroy(payload.instance);
-          self.emitChange();
-          break;
-        case HALCYON_WIZARD_NAVIGATE_TO_INDEX:
-          self.navigateToIndex(payload.instance, payload.index);
-          self.emitChange();
-          break;
-      }
-    });
+    switch (actionType) {
+      case HALCYON_WIZARD_CREATE:
+        this.create(payload.instance);
+        this.emitChange();
+        break;
+      case HALCYON_WIZARD_DESTROY:
+        this.destroy(payload.instance);
+        this.emitChange();
+        break;
+      case HALCYON_WIZARD_NAVIGATE_TO_INDEX:
+        this.navigateToIndex(payload.instance, payload.index);
+        this.emitChange();
+        break;
+    }
   }
 
   exists (instance) {

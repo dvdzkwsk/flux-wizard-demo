@@ -3,9 +3,6 @@ import Halcyon from 'halcyon';
 import ExampleDispatcher from './dispatcher';
 import ExampleWizard from './wizard';
 
-// We need to tell Halcyon what dispatcher it should register its stores with:
-Halcyon.registerWithDispatcher(ExampleDispatcher);
-
 class ExampleApp extends ReactComponent {
   constructor () {
     super();
