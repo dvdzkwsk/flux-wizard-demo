@@ -107,6 +107,33 @@ class HalcyonWizard extends ReactComponent {
     this.attemptToNavigateToIndex(idx);
   }
 
+  // TODO: move this to another component
+  renderDirectionalNavigation () {
+    const { currentStepIndex } = this.state,
+          navigateTo    = (idx) => () => this.attemptToNavigateToIndex(idx),
+          isOnFirstStep = currentStepIndex === 0,
+          isOnLastStep  = currentStepIndex === this.props.steps.length - 1;
+
+    return (
+      <div className='col-xs-12'>
+        <div className='pull-left'>
+          <button className='btn btn-info pull-left'
+                  disabled={isOnFirstStep}
+                  onClick={navigateTo(currentStepIndex - 1)}>
+            Previous
+          </button>
+        </div>
+        <div className='pull-right'>
+          <button className='btn btn-info pull-right'
+                  disabled={isOnLastStep}
+                  onClick={navigateTo(currentStepIndex + 1)}>
+            Next
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   renderViewport () {
     const StepComponent = this.props.steps[this.state.currentStepIndex];
 
@@ -115,6 +142,7 @@ class HalcyonWizard extends ReactComponent {
         <div className='col-xs-12'>
           <StepComponent ref='step' model={this.state.model} />
         </div>
+        {this.renderDirectionalNavigation()}
       </div>
     );
   }
