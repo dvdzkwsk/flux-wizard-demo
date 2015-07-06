@@ -9,15 +9,15 @@ Requirements
 
 Getting Started
 ---------------
-Halcyon is designed to work in a traditional Flux architecture, and by default bundles its own dispatcher so works even if your application is not built on Flux. If you'd prefer to incorporate Halcyon into your own dispatcher, simply do the following:
+Halcyon is designed to work in a traditional Flux architecture, and by default bundles its own dispatcher so it works even if your application is not built on Flux. If you'd prefer to incorporate Halcyon into your app's life cycle, simply use the following hook:
 
 ```js
-import { registerStoresWithDispatcher } from 'Halcyon';
+import Halcyon from 'Halcyon';
 
-registerStoresWithDispatcher(YourDispatcher);
+Halcyon.registerStoresWithDispatcher(YourDispatcher);
 ```
 
-That's it! This convenience method will inform all Halcyon stores to register with your dispatcher so that Halcyon can be fully integrated with your app's life cycle. Note: this will also unregister all Halcyon stores from the previous dispatcher.
+That's it! This convenience method will inform all Halcyon stores to unregister with the active dispatcher and re-register with the one you provide.
 
 Creating a Wizard
 -----------------
