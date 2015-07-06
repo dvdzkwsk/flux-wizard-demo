@@ -6,9 +6,7 @@ import {
   HALCYON_WIZARD_DESTROY,
   HALCYON_WIZARD_NAVIGATE_TO_INDEX,
   HALCYON_WIZARD_SUBMIT_START,
-  HALCYON_WIZARD_SUBMIT_FINISH,
-  HALCYON_WIZARD_SUBMIT_SUCCESS,
-  HALCYON_WIZARD_SUBMIT_ERROR
+  HALCYON_WIZARD_SUBMIT_END
 } from '../constants';
 
 const HALCYON_CHANGE_EVENT = 'HALCYON_CHANGE_EVENT';
@@ -41,6 +39,14 @@ class HalcyonStore extends EventEmitter {
         break;
       case HALCYON_WIZARD_NAVIGATE_TO_INDEX:
         this.navigateToIndex(payload.instance, payload.index);
+        this.emitChange();
+        break;
+      case HALCYON_WIZARD_SUBMIT_START:
+        this.startSubmissionFor(payload.instance);
+        this.emitChange();
+        break;
+      case HALCYON_WIZARD_SUBMIT_END:
+        this.endSubmissionFor(payload.instance);
         this.emitChange();
         break;
     }
@@ -80,8 +86,16 @@ class HalcyonStore extends EventEmitter {
     this.updateProperty('currentStepIndex', instance, index);
   }
 
+  startSubmissionFor (instance) {
+    this.updateProperty('submitting', instance, true);
+  }
+
+  endSubmissionFor (instance) {
+    this.updateProperty('submitting', instance, false);
+  }
+
   emitChange () {
-    this.emit(HALCYON_CHANGE_EVENT)
+    this.emit(HALCYON_CHANGE_EVENT);
   }
 
   addChangeListener (handler) {
