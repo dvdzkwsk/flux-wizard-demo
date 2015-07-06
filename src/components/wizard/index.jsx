@@ -1,10 +1,9 @@
 import React, { Component as ReactComponent } from 'react';
-import HalcyonNavigationBar from '../navigation';
+import HalcyonStepNavigation from '../step-navigation/index.jsx';
 import HalcyonDirectionalNavigation from '../directional-navigation/index.jsx';
-import HalcyonStep from '../step';
 import HalcyonActions from '../../actions';
 import HalcyonStore from '../../stores';
-import { warn } from '../../lib/logger';
+import { info } from '../../lib/logger';
 
 class HalcyonWizard extends ReactComponent {
   constructor () {
@@ -68,13 +67,13 @@ class HalcyonWizard extends ReactComponent {
   // [Number] Current Step Index
   // [Number] Target Step Index
   wizardWillNavigate () {
-    warn('Life Cycle Method .wizardWillNavigate() not implemented.');
+    info('Life Cycle Method .wizardWillNavigate() not implemented.');
   }
 
   // Called after the wizard successfuly navigates to a new step. No arguments
   // are provided.
   wizardDidNavigate () {
-    warn('Life Cycle Method .wizardDidNavigate() not implemented.');
+    info('Life Cycle Method .wizardDidNavigate() not implemented.');
   }
 
   // ----------------------------------
@@ -108,36 +107,31 @@ class HalcyonWizard extends ReactComponent {
     this.attemptToNavigateToIndex(idx);
   }
 
-  renderViewport () {
-    const { steps } = this.props,
-          { currentStepIndex } = this.state,
+  render () {
+    const { steps, disabled } = this.props,
+          { model, currentStepIndex } = this.state,
           StepComponent = steps[currentStepIndex],
           onFirstStep   = currentStepIndex === 0,
           onLastStep    = currentStepIndex === steps.length - 1;
 
     return (
-      <div className='row'>
-        <div className='col-xs-12'>
-          <StepComponent ref='step' model={this.state.model} />
-        </div>
-        <HalcyonDirectionalNavigation disableBackwardNavigation={onFirstStep}
-                                      disableForwardNavigation={onLastStep}
-                                      onClick={::this.attemptToNavigateToIndex}
-                                      currentStepIndex={currentStepIndex} />
-      </div>
-    );
-  }
-
-  render () {
-    return (
       <div className='halcyon'>
-        <HalcyonNavigationBar steps={this.props.steps}
+        <HalcyonStepNavigation steps={this.props.steps}
                               disabled={this.props.disabled}
-                              activeStepIndex={this.state.currentStepIndex}
+                              currentStepIndex={this.state.currentStepIndex}
                               onChange={::this.onNavigationChange} />
-                            <div className='halcyon__viewport'>
-          {this.renderViewport()}
+        <div className='halcyon__viewport'>
+          <div className='row'>
+            <div className='col-xs-12'>
+              <StepComponent ref='step' model={model} disabled={disabled} />
+            </div>
+          </div>
         </div>
+        <HalcyonDirectionalNavigation currentStepIndex={currentStepIndex}
+                                      onClick={::this.attemptToNavigateToIndex}
+                                      disabled={disabled}
+                                      disableBackwardNavigation={onFirstStep}
+                                      disableForwardNavigation={onLastStep} />
       </div>
     );
   }

@@ -4,7 +4,7 @@ import { warn } from '../../lib/logger';
 
 const CAMEL_CASE_REGEX = /([a-z](?=[A-Z]))/g;
 
-class HalcyonNavigation extends ReactComponent {
+class HalcyonStepNavigation extends ReactComponent {
   constructor () {
     super();
   }
@@ -16,7 +16,7 @@ class HalcyonNavigation extends ReactComponent {
     // step, emit an onChange event to the parent.
     if (
       !this.props.disabled &&
-      idx !== this.props.activeStepIndex &&
+      idx !== this.props.currentStepIndex &&
       this.props.onChange
     ) {
       this.props.onChange(idx, e);
@@ -29,7 +29,7 @@ class HalcyonNavigation extends ReactComponent {
 
   renderStepTabs () {
     return this.props.steps.map((step, idx) => {
-      const isActive = idx === this.props.activeStepIndex;
+      const isActive = idx === this.props.currentStepIndex;
 
       return (
         <li key={idx} className={isActive ? 'active' : ''}>
@@ -56,15 +56,15 @@ class HalcyonNavigation extends ReactComponent {
   }
 }
 
-HalcyonNavigation.propTypes = {
+HalcyonStepNavigation.propTypes = {
   steps : PropTypes.array.isRequired,
-  activeStepIndex : PropTypes.number.isRequired,
+  currentStepIndex : PropTypes.number.isRequired,
   disabled : PropTypes.bool,
   onChange : PropTypes.func
 };
 
-HalcyonNavigation.defaultProps = {
+HalcyonStepNavigation.defaultProps = {
   disabled : false
 };
 
-export default HalcyonNavigation;
+export default HalcyonStepNavigation;
