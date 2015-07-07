@@ -3,7 +3,7 @@ import HalcyonStepNavigation from '../step-navigation/index.jsx';
 import HalcyonDirectionalNavigation from '../directional-navigation/index.jsx';
 import HalcyonActions from '../../actions';
 import HalcyonStore from '../../stores';
-import { info } from '../../lib/logger';
+import { warn, info } from '../../lib/logger';
 
 class HalcyonWizard extends ReactComponent {
   constructor () {
@@ -11,15 +11,22 @@ class HalcyonWizard extends ReactComponent {
     this.state = {};
   }
 
-  // Check to see if this wizard already exists, and if so update internal
-  // state to match the flux store. If this type of wizard doesn't already
-  // exist, create a new one in the store.
   componentWillMount () {
+    this.wizardWillMount();
     HalcyonStore.addChangeListener(::this.handleStoreUpdate);
     HalcyonActions.create(this);
   }
 
+  componentDidMount () {
+    this.wizardDidMount();
+  }
+
+  componentWillUnmount () {
+    this.wizardWillUnmount();
+  }
+
   componentDidUnmount () {
+    this.wizardDidUnmount();
     HalcyonStore.destroy(this);
     HalcyonStore.removeChangeListener(::this.handleStoreUpdate);
   }
@@ -34,19 +41,12 @@ class HalcyonWizard extends ReactComponent {
   // Store Update Handler
   // ----------------------------------
   handleStoreUpdate () {
-    this.setState(this.getStateFromStore());
-  }
+    const state = HalcyonStore.getStateFor(this);
 
-  getStateFromStore () {
-    const {
-      model,
-      currentStepIndex
-    } = HalcyonStore.getStateFor(this);
-
-    return {
-      model : model,
-      currentStepIndex : currentStepIndex
-    };
+    this.setState({
+      currentStepIndex : state.currentStepIndex,
+      submitting : state.submitting
+    });
   }
 
   // ----------------------------------
@@ -74,6 +74,25 @@ class HalcyonWizard extends ReactComponent {
   // are provided.
   wizardDidNavigate () {
     info('Life Cycle Method .wizardDidNavigate() not implemented.');
+  }
+
+  wizardWillMount () {
+    // noop
+  }
+
+  wizardDidMount () {
+    // noop
+  }
+
+  wizardWillUnmount () {
+    // noop
+  }
+
+  wizardDidUnmount () {
+    // noop
+  }
+
+  wizardWillSubmit () {
   }
 
   // ----------------------------------
@@ -107,29 +126,39 @@ class HalcyonWizard extends ReactComponent {
     this.attemptToNavigateToIndex(idx);
   }
 
+  // Event handler for submission button click.
+  // ------------------------
+  onSubmitClick () {
+    HalcyonActions.startSubmission(this);
+  }
+
   render () {
-    const { steps, disabled } = this.props,
-          { model, currentStepIndex } = this.state,
+    const { steps, model } = this.props,
+          { currentStepIndex } = this.state,
           StepComponent = steps[currentStepIndex],
           onFirstStep   = currentStepIndex === 0,
           onLastStep    = currentStepIndex === steps.length - 1;
 
+    const wizardIsDisabled = this.props.disabled || this.state.submitting;
+
     return (
       <div className='halcyon'>
-        <HalcyonStepNavigation steps={this.props.steps}
-                              disabled={this.props.disabled}
-                              currentStepIndex={this.state.currentStepIndex}
-                              onChange={::this.onNavigationChange} />
+        <HalcyonStepNavigation steps={steps}
+                               disabled={wizardIsDisabled}
+                               currentStepIndex={currentStepIndex}
+                               onChange={::this.onNavigationChange} />
         <div className='halcyon__viewport'>
           <div className='row'>
             <div className='col-xs-12'>
-              <StepComponent ref='step' model={model} disabled={disabled} />
+              <StepComponent ref='step'
+                             model={model}
+                             disabled={wizardIsDisabled} />
             </div>
           </div>
         </div>
         <HalcyonDirectionalNavigation currentStepIndex={currentStepIndex}
                                       onClick={::this.attemptToNavigateToIndex}
-                                      disabled={disabled}
+                                      disabled={wizardIsDisabled}
                                       disableBackwardNavigation={onFirstStep}
                                       disableForwardNavigation={onLastStep} />
       </div>
@@ -138,6 +167,7 @@ class HalcyonWizard extends ReactComponent {
 }
 
 HalcyonWizard.propTypes = {
+  model : React.PropTypes.object.isRequired,
   steps : React.PropTypes.array.isRequired
 };
 

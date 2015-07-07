@@ -1,20 +1,34 @@
 import React, { Component as ReactComponent } from 'react';
 import Halcyon from 'halcyon';
-import ExampleDispatcher from './dispatcher';
 import ExampleWizard from './wizard';
-
-// We can override the default Halcyon Dispatcher
-Halcyon.registerStoresWithDispatcher(ExampleDispatcher);
+import ExampleModelStore from './stores/example-model';
 
 class ExampleApp extends ReactComponent {
   constructor () {
     super();
+    this.state = {
+      model : ExampleModelStore.get()
+    };
+  }
+
+  componentWillMount () {
+    ExampleModelStore.addChangeListener(::this.handleStoreUpdate);
+  }
+
+  componentDidUnmount () {
+    ExampleModelStore.removeChangeListener(::this.handleStoreUpdate);
+  }
+
+  handleStoreUpdate () {
+    this.setState({
+      model : ExampleModelStore.get()
+    });
   }
 
   render () {
     return (
       <div className='container'>
-        <ExampleWizard />
+        <ExampleWizard model={this.state.model} />
       </div>
     );
   }
