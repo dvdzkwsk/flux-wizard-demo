@@ -1,4 +1,4 @@
-import { getDispatcher } from '../configure-dispatcher.js';
+import { getDispatcher } from '../dispatcher-configurer.js';
 import {
   HALCYON_WIZARD_CREATE,
   HALCYON_WIZARD_DESTROY,

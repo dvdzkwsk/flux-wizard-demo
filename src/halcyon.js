@@ -1,4 +1,4 @@
-import { registerStoresWithDispatcher } from './configure-dispatcher';
+import { registerStoresWithDispatcher } from './dispatcher-configurer';
 import Dispatcher from './dispatcher';
 
 // Register with the built-in Halcyon dispatcher by default
