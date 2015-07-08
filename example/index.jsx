@@ -1,3 +1,4 @@
+import debug from 'debug';
 import React, { Component as ReactComponent } from 'react';
 import Halcyon from 'halcyon';
 import ExampleWizard from './wizard';

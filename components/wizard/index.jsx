@@ -3,7 +3,6 @@ import HalcyonStepNavigation from '../step-navigation/index.jsx';
 import HalcyonDirectionalNavigation from '../directional-navigation/index.jsx';
 import HalcyonActions from '../../actions';
 import HalcyonStore from '../../stores';
-import { warn, info } from '../../lib/logger';
 
 class HalcyonWizard extends ReactComponent {
   constructor () {
@@ -67,13 +66,13 @@ class HalcyonWizard extends ReactComponent {
   // [Number] Current Step Index
   // [Number] Target Step Index
   wizardWillNavigate () {
-    info('Life Cycle Method .wizardWillNavigate() not implemented.');
+    // noop
   }
 
   // Called after the wizard successfuly navigates to a new step. No arguments
   // are provided.
   wizardDidNavigate () {
-    info('Life Cycle Method .wizardDidNavigate() not implemented.');
+    // noop
   }
 
   wizardWillMount () {
@@ -93,6 +92,7 @@ class HalcyonWizard extends ReactComponent {
   }
 
   wizardWillSubmit () {
+    // noop
   }
 
   // ----------------------------------

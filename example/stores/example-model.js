@@ -1,3 +1,4 @@
+import Immutable from 'immutable';
 import { EventEmitter } from 'events';
 import Dispatcher from '../dispatcher';
 import {
@@ -5,8 +6,8 @@ import {
   EXAMPLE_MODEL_UPDATE_PROPERTY,
   EXAMPLE_MODEL_UPDATE_LEAF
 } from '../constants/example-model';
-import Immutable from 'immutable';
 
+var _model = Immutable.Map();
 const EXAMPLE_MODEL_CHANGE_EVENT = 'EXAMPLE_MODEL_CHANGE_EVENT';
 
 class ExampleModelStore extends EventEmitter {
@@ -14,7 +15,7 @@ class ExampleModelStore extends EventEmitter {
     super();
     const self = this;
 
-    this._model = Immutable.Map();
+    _model = Immutable.Map();
     this.dispatchToken = Dispatcher.register(function (action) {
       const { actionType, payload } = action;
 
@@ -36,19 +37,19 @@ class ExampleModelStore extends EventEmitter {
   }
 
   get () {
-    return this._model.toJS();
+    return _model.toJS();
   }
 
   reset () {
-    this._model.clear();
+    _model.clear();
   }
 
   updateProperty (property, value) {
-    this._model = this._model.set(property, value);
+    _model = _model.set(property, value);
   }
 
   updateLeaf (leafs, value) {
-    this._model = this._model.setIn(leafs, value);
+    _model = _model.setIn(leafs, value);
   }
 
   emitChange () {

@@ -1,8 +1,5 @@
 import React, { Component as ReactComponent, PropTypes } from 'react';
 import HalcyonStep from '../step';
-import { warn } from '../../lib/logger';
-
-const CAMEL_CASE_REGEX = /([a-z](?=[A-Z]))/g;
 
 class HalcyonStepNavigation extends ReactComponent {
   constructor () {
@@ -24,7 +21,7 @@ class HalcyonStepNavigation extends ReactComponent {
   }
 
   getTitleForStep (step) {
-    return step.title || step.name.replace(CAMEL_CASE_REGEX, '$1 ');
+    return step.title || step.name.replace(/([a-z](?=[A-Z]))/g, '$1 ');
   }
 
   renderStepTabs () {

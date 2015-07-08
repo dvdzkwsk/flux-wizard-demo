@@ -1,5 +1,4 @@
 import { EventEmitter } from 'events';
-import { warn } from '../lib/logger';
 import assign from 'react/lib/Object.assign';
 import {
   HALCYON_WIZARD_CREATE,
@@ -9,6 +8,7 @@ import {
   HALCYON_WIZARD_SUBMIT_END
 } from '../constants';
 
+const debug = require('debug')('halcyon:store');
 const HALCYON_CHANGE_EVENT = 'HALCYON_CHANGE_EVENT';
 const ACTIVE_WIZARDS = new WeakMap();
 
@@ -58,7 +58,7 @@ class HalcyonStore extends EventEmitter {
 
   create (instance) {
     if (ACTIVE_WIZARDS.get(instance)) {
-      warn('This wizard already exists, ignoring create.');
+      debug('This wizard already exists, ignoring create.');
       return;
     }
 

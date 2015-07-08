@@ -1,5 +1,4 @@
 import React, { Component as ReactComponent, PropTypes } from 'react';
-import { info } from '../../lib/logger';
 
 class HalcyonStep extends ReactComponent {
   constructor () {
@@ -12,11 +11,11 @@ class HalcyonStep extends ReactComponent {
   }
 
   stepWillExit () {
-    info('Life Cycle Method .stepWillExit() not implemented.');
+    // noop
   }
 
   render () {
-    info('Abstract method HalcyonStep.render() not implemented.');
+    console.warn('Abstract method HalcyonStep.render() not implemented.');
   }
 }
 

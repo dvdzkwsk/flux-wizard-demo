@@ -1,6 +1,5 @@
 import React from 'react';
 import { Step as HalcyonStep } from 'halcyon';
-import { error } from '../../../src/lib/logger';
 import TitleInput from './title-input';
 
 class FirstStep extends HalcyonStep {
@@ -12,7 +11,7 @@ class FirstStep extends HalcyonStep {
     const { title } = this.props.model;
 
     if (!title || title.length === 0) {
-      error('A title is required to continue');
+      console.error('Validation Error: a title is required to continue.');
       return false;
     }
     return true;
