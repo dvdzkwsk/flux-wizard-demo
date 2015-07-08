@@ -8,7 +8,6 @@ import {
   HALCYON_WIZARD_SUBMIT_END
 } from '../constants';
 
-const debug = require('debug')('halcyon:store');
 const HALCYON_CHANGE_EVENT = 'HALCYON_CHANGE_EVENT';
 const ACTIVE_WIZARDS = new WeakMap();
 
@@ -57,11 +56,6 @@ class HalcyonStore extends EventEmitter {
   }
 
   create (instance) {
-    if (ACTIVE_WIZARDS.get(instance)) {
-      debug('This wizard already exists, ignoring create.');
-      return;
-    }
-
     ACTIVE_WIZARDS.set(instance, {
       currentStepIndex : 0
     });
