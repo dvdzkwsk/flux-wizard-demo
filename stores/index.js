@@ -1,5 +1,4 @@
 import { EventEmitter } from 'events';
-import assign from 'react/lib/Object.assign';
 import {
   HALCYON_WIZARD_CREATE,
   HALCYON_WIZARD_DESTROY,
