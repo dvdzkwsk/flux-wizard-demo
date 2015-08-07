@@ -33,7 +33,7 @@ module.exports = {
   resolve : {
     extensions : ['', '.js', '.jsx'],
     alias : {
-      halcyon : path.resolve(__dirname + '/halcyon.js')
+      halcyon : path.resolve(__dirname + '/src/index.js')
     }
   },
   module : {
@@ -41,7 +41,7 @@ module.exports = {
       test    : [/\.(js|jsx)?$/],
       include : [
         path.resolve(__dirname + '/example'),
-        path.resolve(__dirname + '/')
+        path.resolve(__dirname + '/src')
       ],
       exclude : /node_modules/,
       loaders : ['react-hot', 'babel?stage=0']

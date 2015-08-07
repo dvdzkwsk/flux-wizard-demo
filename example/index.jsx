@@ -1,34 +1,25 @@
-import React, { Component as ReactComponent } from 'react';
-import Halcyon from 'halcyon';
-import ExampleWizard from './wizard';
-import ExampleModelStore from './stores/example-model';
+import React from 'react';
+import { Wizard as HalcyonWizard } from 'halcyon';
+import FirstStep from './steps/first';
+import SecondStep from './steps/second';
+import ThirdStep from './steps/third';
 
-class ExampleApp extends ReactComponent {
+class ExampleApp extends React.Component {
   constructor () {
     super();
     this.state = {
-      model : ExampleModelStore.get()
+      model : {}
     };
-  }
-
-  componentWillMount () {
-    ExampleModelStore.addChangeListener(::this.handleStoreUpdate);
-  }
-
-  componentDidUnmount () {
-    ExampleModelStore.removeChangeListener(::this.handleStoreUpdate);
-  }
-
-  handleStoreUpdate () {
-    this.setState({
-      model : ExampleModelStore.get()
-    });
   }
 
   render () {
     return (
       <div className='container'>
-        <ExampleWizard model={this.state.model} />
+        <HalcyonWizard model={this.state.model}>
+          <FirstStep />
+          <SecondStep />
+          <ThirdStep />
+        </HalcyonWizard>
       </div>
     );
   }

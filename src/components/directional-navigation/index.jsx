@@ -1,12 +1,26 @@
-import React, { Component as ReactComponent } from 'react';
+import React from 'react';
 
-class HalcyonDirectionalNavigation extends ReactComponent {
+export default class HalcyonDirectionalNavigation extends React.Component {
+  static propTypes = {
+    onChange  : React.PropTypes.func.isRequired,
+    disabled  : React.PropTypes.bool,
+    currentStepIndex : React.PropTypes.number.isRequired,
+    disableBackwardNavigation : React.PropTypes.bool,
+    disableForwardNavigation  : React.PropTypes.bool
+  }
+
+  static defaultProps = {
+    disabled : false,
+    disableBackwardNavigation  : false,
+    disableForwardNavigation   : false
+  }
+
   constructor () {
     super();
   }
 
   handleClick (idx) {
-    this.props.onClick(idx);
+    this.props.onChange(idx);
   }
 
   render () {
@@ -38,19 +52,3 @@ class HalcyonDirectionalNavigation extends ReactComponent {
     );
   }
 }
-
-HalcyonDirectionalNavigation.propTypes = {
-  onClick  : React.PropTypes.func.isRequired,
-  disabled : React.PropTypes.bool,
-  currentStepIndex : React.PropTypes.number.isRequired,
-  disableBackwardNavigation : React.PropTypes.bool,
-  disableForwardNavigation  : React.PropTypes.bool
-};
-
-HalcyonDirectionalNavigation.defaultProps = {
-  disabled : false,
-  disableBackwardNavigation  : false,
-  disableForwardNavigation   : false
-};
-
-export default HalcyonDirectionalNavigation;

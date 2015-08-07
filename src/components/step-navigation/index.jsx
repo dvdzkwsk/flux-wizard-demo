@@ -1,7 +1,17 @@
-import React, { Component as ReactComponent, PropTypes } from 'react';
-import HalcyonStep from '../step';
+import React from 'react';
 
-class HalcyonStepNavigation extends ReactComponent {
+export default class HalcyonStepNavigation extends React.Component {
+  static propTypes = {
+    disabled : React.PropTypes.bool,
+    onChange : React.PropTypes.func,
+    steps    : React.PropTypes.array.isRequired,
+    currentStepIndex : React.PropTypes.number.isRequired
+  }
+
+  static defaultProps = {
+    disabled : false
+  }
+
   constructor () {
     super();
   }
@@ -21,7 +31,7 @@ class HalcyonStepNavigation extends ReactComponent {
   }
 
   getTitleForStep (step) {
-    return step.title || step.name.replace(/([a-z](?=[A-Z]))/g, '$1 ');
+    return step.type.name.replace(/([a-z](?=[A-Z]))/g, '$1 ');
   }
 
   renderStepTabs () {
@@ -52,16 +62,3 @@ class HalcyonStepNavigation extends ReactComponent {
     );
   }
 }
-
-HalcyonStepNavigation.propTypes = {
-  steps : PropTypes.array.isRequired,
-  currentStepIndex : PropTypes.number.isRequired,
-  disabled : PropTypes.bool,
-  onChange : PropTypes.func
-};
-
-HalcyonStepNavigation.defaultProps = {
-  disabled : false
-};
-
-export default HalcyonStepNavigation;
