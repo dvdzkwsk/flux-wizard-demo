@@ -2,7 +2,8 @@ import React from 'react';
 
 export default class HalcyonStep extends React.Component {
   static propTypes = {
-
+    hideParentNavigation : React.PropTypes.func,
+    showParentNavigation : React.PropTypes.func
   }
 
   static defaultProps = {
@@ -11,6 +12,18 @@ export default class HalcyonStep extends React.Component {
 
   constructor () {
     super();
+  }
+
+  showParentNavigation () {
+    if (typeof this.props.showParentNavigation === 'function') {
+      this.props.showParentNavigation();
+    }
+  }
+
+  hideParentNavigation () {
+    if (typeof this.props.hideParentNavigation === 'function') {
+      this.props.hideParentNavigation();
+    }
   }
 
   shouldStepExit () {

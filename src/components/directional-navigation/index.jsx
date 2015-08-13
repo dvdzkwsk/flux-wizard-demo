@@ -33,7 +33,7 @@ export default class HalcyonDirectionalNavigation extends React.Component {
     } = this.props;
 
     return (
-      <div>
+      <div className='halcyon__directional-navigation'>
         <div className='pull-left'>
           <button className='btn btn-info pull-left'
                   disabled={disabled || disableBackwardNavigation}

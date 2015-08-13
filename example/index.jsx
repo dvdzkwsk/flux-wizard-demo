@@ -15,7 +15,13 @@ class ExampleApp extends React.Component {
   constructor () {
     super();
     this.state = {
-      model : {}
+      model : {
+        contacts : [
+          { name : 'Michael Scott' },
+          { name : 'Dwight Schrute' },
+          { name : 'Jim Halpert' }
+        ]
+      }
     };
   }
 

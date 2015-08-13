@@ -7,7 +7,7 @@ import HalcyonStepNavigation from '../step-navigation/index.jsx';
 import HalcyonDirectionalNavigation from '../directional-navigation/index.jsx';
 
 @connect(state => ({
-  wizards : state.wizard
+  wizards : state.wizards
 }))
 export default class HalcyonWizard extends React.Component {
   static propTypes = {
@@ -33,7 +33,7 @@ export default class HalcyonWizard extends React.Component {
   // this._actions.changeWizardStep(this, 2);
   // is now
   // this._actions.changeWizardStep(2);
-  bindActionCreatorsToInstance (actions) {
+  bindActionCreatorsToWizardInstance (actions) {
     const boundToWizardInstance = Object.keys(actions)
       .reduce((acc, key) => {
         acc[key] = actions[key].bind(null, this);
@@ -44,7 +44,7 @@ export default class HalcyonWizard extends React.Component {
   }
 
   componentWillMount () {
-    this._actions = this.bindActionCreatorsToInstance(WizardActions);
+    this._actions = this.bindActionCreatorsToWizardInstance(WizardActions);
     this._actions.createWizard();
 
     this.wizardWillMount();
@@ -73,10 +73,18 @@ export default class HalcyonWizard extends React.Component {
     }
   }
 
-  componentDidUpdate (prevProps, prevState) {
-    // if (prevState.currentStepIndex !== this.state.currentStepIndex) {
-    //   this.wizardDidNavigate();
-    // }
+  componentDidUpdate (prevProps) {
+    const prevState = prevProps.wizards.get(this);
+    const state     = this.getCurrentState();
+
+    // If this hook is called immediately after the wizard was created (during
+    // the first render cycle) then return early since nothing actually changed.
+    if (!prevState) return;
+
+    // Broadcast completed navigation event if step index has changed
+    if (prevState.get('currentStepIndex') !== state.get('currentStepIndex')) {
+      this.wizardWillNavigate();
+    }
   }
 
   // ----------------------------------
@@ -162,33 +170,63 @@ export default class HalcyonWizard extends React.Component {
   renderStepComponent (component) {
     return React.cloneElement(component, {
       ref   : 'step',
-      model : this.props.model
+      model : this.props.model,
+      hideParentNavigation : this._actions.hideNavigation,
+      showParentNavigation : this._actions.showNavigation
     });
   }
 
-  render () {
-    const state = this.getCurrentState().toJS();
-    const steps = this.props.children;
+  renderStepNavigation () {
+    return (
+      <HalcyonStepNavigation steps={this.getSteps()}
+                             disabled={this.isDisabled()}
+                             currentStepIndex={this.getCurrentStepIndex()}
+                             onChange={::this.onNavigationChange} />
+    );
+  }
 
-    // state helpers
-    const isOnFirstStep = state.currentStepIndex === 0,
-          isOnLastStep  = state.currentStepIndex === steps.length - 1,
-          isDisabled    = state.disabled;
+  renderDirectionalNavigation () {
+    return (
+      <HalcyonDirectionalNavigation currentStepIndex={this.getCurrentStepIndex()}
+                                    onChange={::this.attemptToNavigateToIndex}
+                                    disabled={this.isDisabled()}
+                                    disableBackwardNavigation={this.isOnFirstStep()}
+                                    disableForwardNavigation={this.isOnLastStep()} />
+    );
+  }
+
+  getSteps () {
+    return this.props.children.length ?
+      this.props.children : [this.props.children];
+  }
+
+  getCurrentStepIndex () {
+    return this.getCurrentState().get('currentStepIndex');
+  }
+
+  isOnFirstStep () {
+    return this.getCurrentStepIndex() === 0;
+  }
+
+  isOnLastStep () {
+    return this.getCurrentStepIndex() === this.getSteps().length - 1;
+  }
+
+  isDisabled () {
+    return false;
+  }
+
+  render () {
+    const state = this.getCurrentState();
+    const isNavigationVisible = !state.get('isNavigationHidden');
 
     return (
       <div className='halcyon'>
-        <HalcyonStepNavigation steps={steps}
-                               disabled={isDisabled}
-                               currentStepIndex={state.currentStepIndex}
-                               onChange={::this.onNavigationChange} />
+        {isNavigationVisible && this.renderStepNavigation()}
         <div className='halcyon__viewport'>
-          {this.renderStepComponent(steps[state.currentStepIndex])}
+          {this.renderStepComponent(this.getSteps()[this.getCurrentStepIndex()])}
         </div>
-        <HalcyonDirectionalNavigation currentStepIndex={state.currentStepIndex}
-                                      onChange={::this.attemptToNavigateToIndex}
-                                      disabled={isDisabled}
-                                      disableBackwardNavigation={isOnFirstStep}
-                                      disableForwardNavigation={isOnLastStep} />
+        {isNavigationVisible && this.renderDirectionalNavigation()}
       </div>
     );
   }

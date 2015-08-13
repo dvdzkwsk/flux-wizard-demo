@@ -1,1 +1,1 @@
-export { default as wizard } from './wizard';
+export { default as wizards } from './wizards';
