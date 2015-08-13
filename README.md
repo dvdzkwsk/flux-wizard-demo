@@ -1,11 +1,11 @@
 Halcyon
 -------
-A lightweight Flux-based Wizard platform for React. Wizards and steps provide clean life cycle hooks, and the Flux stores are designed to support concurrent (nested) wizards.
+A lightweight Flux-based Wizard platform for React.
 
 Requirements
 ------------
 * React `^0.13.0`
-* ES6 (with ES7 flags enabled) transpiler until this package bundles a dist vesion.
+* ES6 (with ES7 flags enabled) transpiler until this package bundles a dist version.
 
 Getting Started
 ---------------
@@ -23,40 +23,7 @@ Creating a Wizard
 -----------------
 Halcyon exposes a `Wizard` component class that you can extend to take advantage of included navigation, rendering, and life cycle hooks. Here's an example:
 
-```js
-import React from 'react';
-import { Wizard as HalyconWizard } from 'halcyon';
-
-class ExampleWizard extends HalyconWizard {
-  constructor () {
-    super();
-  }
-};
-
-export default ExampleWizard;
-```
-
-If you wish to provide default steps to your wizard, you don't have to do anything special, just use React's `defaultProps`:
-
-```js
-import React from 'react';
-import { Wizard as HalyconWizard } from 'halcyon';
-import FirstStep from '../steps/first';
-import SecondStep from '../steps/second';
-import ThirdStep from '../steps/third';
-
-class ExampleWizard extends HalyconWizard {
-  constructor () {
-    super();
-  }
-};
-
-ExampleWizard.defaultProps = {
-  steps : [FirstStep, SecondStep, ThirdStep]
-};
-
-export default ExampleWizard;
-```
+TODO
 
 Creating Steps
 --------------

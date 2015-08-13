@@ -1,8 +1,15 @@
 import React from 'react';
-import { Wizard as HalcyonWizard } from 'halcyon';
 import FirstStep from './steps/first';
 import SecondStep from './steps/second';
 import ThirdStep from './steps/third';
+import { combineReducers, createStore } from 'redux';
+import { Provider } from 'react-redux';
+import {
+  Wizard   as HalcyonWizard,
+  reducers as HalcyonReducers
+} from 'halcyon';
+
+const store = createStore(combineReducers(HalcyonReducers));
 
 class ExampleApp extends React.Component {
   constructor () {
@@ -12,7 +19,7 @@ class ExampleApp extends React.Component {
     };
   }
 
-  render () {
+  renderExampleWizard () {
     return (
       <div className='container'>
         <HalcyonWizard model={this.state.model}>
@@ -21,6 +28,14 @@ class ExampleApp extends React.Component {
           <ThirdStep />
         </HalcyonWizard>
       </div>
+    );
+  }
+
+  render () {
+    return (
+      <Provider store={store}>
+        {() => this.renderExampleWizard()}
+      </Provider>
     );
   }
 }

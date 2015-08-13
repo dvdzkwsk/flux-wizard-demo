@@ -1,7 +1,12 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import * as WizardActions from '../../actions/wizard';
 import HalcyonStepNavigation from '../step-navigation/index.jsx';
 import HalcyonDirectionalNavigation from '../directional-navigation/index.jsx';
 
+@connect(state => ({
+  wizards : state.wizard
+}))
 export default class HalcyonWizard extends React.Component {
   static propTypes = {
     model : React.PropTypes.object.isRequired
@@ -9,12 +14,14 @@ export default class HalcyonWizard extends React.Component {
 
   constructor () {
     super();
-    this.state = {
-      currentStepIndex : 0
-    };
+  }
+
+  getCurrentState () {
+    return this.props.wizards.get(this);
   }
 
   componentWillMount () {
+    this.props.dispatch(WizardActions.createWizard(this));
     this.wizardWillMount();
   }
 
@@ -28,12 +35,26 @@ export default class HalcyonWizard extends React.Component {
 
   componentDidUnmount () {
     this.wizardDidUnmount();
+    this.props.dispatch(WizardActions.destroyWizard(this));
+  }
+
+  componentWillUpdate (nextProps) {
+    const state    = this.getCurrentState();
+    const newState = nextProps.wizards.get(this);
+
+    // If no state exists for this wizard it was just created, so return early.
+    if (!state) return;
+
+    // Broadcast pending navigation if step index has changed
+    if (state.get('currentStepIndex') !== newState.get('currentStepIndex')) {
+      this.wizardWillNavigate();
+    }
   }
 
   componentDidUpdate (prevProps, prevState) {
-    if (prevState.currentStepIndex !== this.state.currentStepIndex) {
-      this.wizardDidNavigate();
-    }
+    // if (prevState.currentStepIndex !== this.state.currentStepIndex) {
+    //   this.wizardDidNavigate();
+    // }
   }
 
   // ----------------------------------
@@ -116,50 +137,51 @@ export default class HalcyonWizard extends React.Component {
     this.attemptToNavigateToIndex(idx);
   }
 
-  // Event handler for submission button click.
-  // ------------------------
-  onSubmitClick () {
-    console.log('submitting');
-  }
-
-  renderCurrentStep (steps, idx) {
-    const component = steps[idx];
-
+  renderStepComponent (component) {
     return React.cloneElement(component, {
       ref   : 'step',
       model : this.props.model
     });
   }
 
-  render () {
-    const { model } = this.props,
-          { currentStepIndex } = this.state;
+  renderLoadingState () {
+    return <p>loadding placeholder</p>;
+  }
 
-    const steps = this.props.children;
+  renderLoadedState (state) {
+    const { currentStepIndex } = state;
 
-    const onFirstStep = currentStepIndex === 0,
-          onLastStep  = currentStepIndex === steps.length - 1,
-          wizardIsDisabled = this.props.disabled || this.state.submitting;
+    // state helpers
+    const isOnFirstStep = currentStepIndex === 0,
+          isOnLastStep  = currentStepIndex === steps.length - 1,
+          isDisabled    = false;
 
     return (
       <div className='halcyon'>
-      <HalcyonStepNavigation steps={steps}
-                             disabled={wizardIsDisabled}
-                             currentStepIndex={currentStepIndex}
-                             onChange={::this.onNavigationChange} />
+        <HalcyonStepNavigation steps={steps}
+                               disabled={isDisabled}
+                               currentStepIndex={currentStepIndex}
+                               onChange={::this.onNavigationChange} />
         <div className='halcyon__viewport'>
-          <div className='row'>
-            <div className='col-xs-12'>
-              {this.renderCurrentStep(steps, currentStepIndex)}
-            </div>
-          </div>
+          {this.renderStepComponent(this.props.children[currentStepIndex])}
         </div>
         <HalcyonDirectionalNavigation currentStepIndex={currentStepIndex}
                                       onChange={::this.attemptToNavigateToIndex}
-                                      disabled={wizardIsDisabled}
-                                      disableBackwardNavigation={onFirstStep}
-                                      disableForwardNavigation={onLastStep} />
+                                      disabled={isDisabled}
+                                      disableBackwardNavigation={isOnFirstStep}
+                                      disableForwardNavigation={isOnLastStep} />
       </div>
     );
+  }
+
+  render () {
+    console.log('===== RENDERING WIZARD =====');
+    const state = this.props.wizards.get(this);
+
+    if (state) {
+      return this.renderLoadedState(state.toJS());
+    } else {
+      return this.renderLoadingState();
+    }
   }
 }
