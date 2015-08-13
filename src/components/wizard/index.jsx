@@ -1,5 +1,7 @@
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { makeDefaultWizardState } from '../../utils';
 import * as WizardActions from '../../actions/wizard';
 import HalcyonStepNavigation from '../step-navigation/index.jsx';
 import HalcyonDirectionalNavigation from '../directional-navigation/index.jsx';
@@ -16,12 +18,35 @@ export default class HalcyonWizard extends React.Component {
     super();
   }
 
+  // If an entry exists for this wizard in the application store, return
+  // that state, otherwise return the default wizard state. This is done
+  // because the first render cycle will not have a valid wizard instance
+  // since the createWizard action occurs on the component level.
   getCurrentState () {
-    return this.props.wizards.get(this);
+    return this.props.wizards.get(this) || makeDefaultWizardState();
+  }
+
+  // Wrapper above Redux's "bindActionCreators" that also binds all actions
+  // to the current wizard instance so that you don't have to pass "this"
+  // as the first argument to every action.
+  // e.g. what once was
+  // this._actions.changeWizardStep(this, 2);
+  // is now
+  // this._actions.changeWizardStep(2);
+  bindActionCreatorsToInstance (actions) {
+    const boundToWizardInstance = Object.keys(actions)
+      .reduce((acc, key) => {
+        acc[key] = actions[key].bind(null, this);
+        return acc;
+      }, {});
+
+    return bindActionCreators(boundToWizardInstance, this.props.dispatch);
   }
 
   componentWillMount () {
-    this.props.dispatch(WizardActions.createWizard(this));
+    this._actions = this.bindActionCreatorsToInstance(WizardActions);
+    this._actions.createWizard();
+
     this.wizardWillMount();
   }
 
@@ -41,9 +66,6 @@ export default class HalcyonWizard extends React.Component {
   componentWillUpdate (nextProps) {
     const state    = this.getCurrentState();
     const newState = nextProps.wizards.get(this);
-
-    // If no state exists for this wizard it was just created, so return early.
-    if (!state) return;
 
     // Broadcast pending navigation if step index has changed
     if (state.get('currentStepIndex') !== newState.get('currentStepIndex')) {
@@ -127,7 +149,7 @@ export default class HalcyonWizard extends React.Component {
     this.refs.step.stepWillExit();
 
     // navigate...
-    console.log(`navigating to ${idx}`);
+    this._actions.changeWizardStep(idx);
   }
 
   // Handler that receives change events from the Navigation component.
@@ -144,44 +166,30 @@ export default class HalcyonWizard extends React.Component {
     });
   }
 
-  renderLoadingState () {
-    return <p>loadding placeholder</p>;
-  }
-
-  renderLoadedState (state) {
-    const { currentStepIndex } = state;
+  render () {
+    const state = this.getCurrentState().toJS();
+    const steps = this.props.children;
 
     // state helpers
-    const isOnFirstStep = currentStepIndex === 0,
-          isOnLastStep  = currentStepIndex === steps.length - 1,
-          isDisabled    = false;
+    const isOnFirstStep = state.currentStepIndex === 0,
+          isOnLastStep  = state.currentStepIndex === steps.length - 1,
+          isDisabled    = state.disabled;
 
     return (
       <div className='halcyon'>
         <HalcyonStepNavigation steps={steps}
                                disabled={isDisabled}
-                               currentStepIndex={currentStepIndex}
+                               currentStepIndex={state.currentStepIndex}
                                onChange={::this.onNavigationChange} />
         <div className='halcyon__viewport'>
-          {this.renderStepComponent(this.props.children[currentStepIndex])}
+          {this.renderStepComponent(steps[state.currentStepIndex])}
         </div>
-        <HalcyonDirectionalNavigation currentStepIndex={currentStepIndex}
+        <HalcyonDirectionalNavigation currentStepIndex={state.currentStepIndex}
                                       onChange={::this.attemptToNavigateToIndex}
                                       disabled={isDisabled}
                                       disableBackwardNavigation={isOnFirstStep}
                                       disableForwardNavigation={isOnLastStep} />
       </div>
     );
-  }
-
-  render () {
-    console.log('===== RENDERING WIZARD =====');
-    const state = this.props.wizards.get(this);
-
-    if (state) {
-      return this.renderLoadedState(state.toJS());
-    } else {
-      return this.renderLoadingState();
-    }
   }
 }

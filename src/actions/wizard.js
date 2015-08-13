@@ -24,6 +24,9 @@ export function destroyWizard (instance) {
 }
 
 export function changeWizardStep (instance, index) {
+  console.log('changing step');
+  console.log(instance);
+  console.log(index);
   return {
     type : HALCYON_WIZARD_STEP_CHANGE,
     payload : {

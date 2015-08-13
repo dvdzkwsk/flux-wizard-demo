@@ -1,4 +1,5 @@
 import Immutable from 'immutable';
+import { makeDefaultWizardState } from '../../utils';
 import {
   HALCYON_WIZARD_CREATE,
   HALCYON_WIZARD_DESTROY,
@@ -6,15 +7,10 @@ import {
 } from '../../constants/wizard';
 
 const initialState = Immutable.Map();
-function makeNewInstanceState () {
-  return Immutable.Map({
-    currentStepIndex : 0
-  });
-}
 
 const actions = {
   [HALCYON_WIZARD_CREATE] : (state, { instance }) => {
-    return state.set(instance, makeNewInstanceState());
+    return state.set(instance, makeDefaultWizardState());
   },
 
   [HALCYON_WIZARD_DESTROY] : (state, { instance }) => {
@@ -33,6 +29,5 @@ const actions = {
 export default function halcyonWizardReducer (state = initialState, action) {
   const handler = actions[action.type];
 
-  console.log('ACTION = ', action.type);
   return handler ? handler(state, action.payload) : state;
 }
