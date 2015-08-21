@@ -6,7 +6,6 @@ import {
   HALCYON_WIZARD_NAVIGATION_SHOW
 } from '../constants/wizard';
 
-
 export function createWizard (instance) {
   return {
     type : HALCYON_WIZARD_CREATE,

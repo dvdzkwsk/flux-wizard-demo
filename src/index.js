@@ -1,5 +1,5 @@
 export default {
-  Step     : require('./components/step/index.jsx'),
-  Wizard   : require('./components/wizard/index.jsx'),
+  Step     : require('./components/step'),
+  Wizard   : require('./components/wizard'),
   reducers : require('./reducers')
 };

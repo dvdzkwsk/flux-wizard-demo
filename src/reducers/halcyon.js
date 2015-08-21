@@ -1,18 +1,20 @@
 import Immutable from 'immutable';
-import { makeDefaultWizardState } from '../../utils';
 import {
   HALCYON_WIZARD_CREATE,
   HALCYON_WIZARD_DESTROY,
   HALCYON_WIZARD_STEP_CHANGE,
   HALCYON_WIZARD_NAVIGATION_HIDE,
   HALCYON_WIZARD_NAVIGATION_SHOW
-} from '../../constants/wizard';
+} from '../constants/wizard';
 
 const initialState = Immutable.Map();
 
 const actions = {
   [HALCYON_WIZARD_CREATE] : (state, { instance }) => {
-    return state.set(instance, makeDefaultWizardState());
+    return state.set(instance, Immutable.Map({
+      currentStepIndex   : 0,
+      isNavigationHidden : false
+    }));
   },
 
   [HALCYON_WIZARD_DESTROY] : (state, { instance }) => {

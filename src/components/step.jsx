@@ -26,12 +26,28 @@ export default class HalcyonStep extends React.Component {
     }
   }
 
-  shouldStepExit () {
+  stepWillEnter () {
+
+  }
+
+  stepDidEnter () {
+
+  }
+
+  shouldStepLeave () {
     return true;
   }
 
-  stepWillExit () {
+  stepWillLeave () {
     // noop
+  }
+
+  stepDidLeave () {
+
+  }
+
+  validate () {
+    return true;
   }
 
   render () {

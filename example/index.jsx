@@ -1,49 +1,23 @@
 import React from 'react';
-import FirstStep from './steps/first';
-import SecondStep from './steps/second';
-import ThirdStep from './steps/third';
 import { combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
-import {
-  Wizard   as HalcyonWizard,
-  reducers as HalcyonReducers
-} from 'halcyon';
+import reducers from './reducers';
+import UserView from './views/user';
 
-const store = createStore(combineReducers(HalcyonReducers));
+const store = createStore(combineReducers(reducers));
 
-class ExampleApp extends React.Component {
+export default class App extends React.Component {
   constructor () {
     super();
-    this.state = {
-      model : {
-        contacts : [
-          { name : 'Michael Scott' },
-          { name : 'Dwight Schrute' },
-          { name : 'Jim Halpert' }
-        ]
-      }
-    };
-  }
-
-  renderExampleWizard () {
-    return (
-      <div className='container'>
-        <HalcyonWizard model={this.state.model}>
-          <FirstStep />
-          <SecondStep />
-          <ThirdStep />
-        </HalcyonWizard>
-      </div>
-    );
   }
 
   render () {
     return (
       <Provider store={store}>
-        {() => this.renderExampleWizard()}
+        {() => <UserView />}
       </Provider>
     );
   }
 }
 
-React.render(<ExampleApp />, document.getElementById('mount-node'));
+React.render(<App />, document.getElementById('mount-node'));
