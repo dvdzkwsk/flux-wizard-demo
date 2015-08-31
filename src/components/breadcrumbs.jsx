@@ -25,12 +25,12 @@ export default class HalcyonBreadcrumbs extends React.Component {
       .take(activeWizardIndex + 1)
       .flatMap(state => {
         const instance    = state.get('instance');
-        const index       = state.get('currentStepIndex');
-        const activeStep  = instance.props.children[index];
+        const wizardIdx   = state.get('index');
+        const activeStep  = instance.props.children[state.get('currentStepIndex')];
 
         return [instance, activeStep]
           .map(getComponentTitle)
-          .map(title => ({ title, instance, index }));
+          .map(title => ({ title, instance, index : wizardIdx }));
       })
       .toJS();
 
