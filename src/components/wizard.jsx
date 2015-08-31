@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import * as WizardActions from '../actions/wizard';
 import HalcyonStepSelector from './step-selector';
 import HalcyonDirectionalNavigation from './directional-navigation';
+import HalcyonBreadcrumbs from './breadcrumbs';
+import './wizard.scss';
 
 @connect(state => ({
   halcyon : state.halcyon
@@ -60,21 +62,20 @@ export default class HalcyonWizard extends React.Component {
   }
 
   componentWillUnmount () {
-    this.destroyWizard();
+    // this.destroyWizard();
   }
 
   componentDidUpdate (prevProps) {
-    const prevState = prevProps.halcyon.get(this);
-    const currState = this.getCurrentState();
+    const prevState = prevProps.halcyon.get('wizards')
+      find(x => x.get('instance') === this);
+    const currState = this.getState();
 
     // If this hook is called immediately after the wizard was created (during
     // the first render cycle) then return early since nothing actually changed.
-    if (!currState || !prevState) return;
+    if (!prevState || !currState) return;
 
-    // Broadcast completed navigation event if step index has changed
-    if (prevState.get('currentStepIndex') !== currState.get('currentStepIndex')) {
-      // do something?
-    }
+    // if state hasn't changed then noop.
+    if (currState === prevState) return;
   }
 
   // ----------------------------------
@@ -133,8 +134,8 @@ export default class HalcyonWizard extends React.Component {
   /**
   * @returns {Map|Undefined} State of the current wizard instance.
   */
-  getCurrentState () {
-    return this.props.halcyon
+  getState () {
+    return this.props.halcyon.get('wizards')
       .find(w => w.get('instance') === this);
   }
 
@@ -150,7 +151,7 @@ export default class HalcyonWizard extends React.Component {
   * @returns {number} The index of the active step.
   */
   getCurrentStepIndex () {
-    return this.getCurrentState().get('currentStepIndex');
+    return this.getState().get('currentStepIndex');
   }
 
   /**
@@ -174,80 +175,78 @@ export default class HalcyonWizard extends React.Component {
     return false;
   }
 
+  /**
+  *
+  */
+  isActive () {
+    const selfIdx   = this.getState().get('index');
+    const activeIdx = this.props.halcyon.get('activeWizardIndex');
+
+    console.log('self idx = ', selfIdx);
+    console.log('target idx = ', activeIdx);
+    return selfIdx === activeIdx;
+  }
+
   // ----------------------------------
   // Rendering Logic
   // ----------------------------------
   renderStepComponent (component) {
     return React.cloneElement(component, {
       ref   : 'step',
-      model : this.props.model,
-      hideParentNavigation : this.hideNavigation,
-      showParentNavigation : this.showNavigation
+      model : this.props.model
     });
   }
 
-  renderStepSelector (state) {
-    if (state.get('isNavigationHidden')) return;
-
-    return (
-      <div className='col-sm-3 halcyon__step-selector'>
-        <HalcyonStepSelector steps={this.getSteps()}
-                             currentStepIndex={state.get('currentStepIndex')}
-                             onChange={::this.onNavigationChange} />
-      </div>
-    );
+  renderSidebar (state) {
+    if (this.isActive()) {
+      return (
+        <div className='halcyon-wizard__sidebar'>
+          <HalcyonStepSelector steps={this.getSteps()}
+                               currentStepIndex={state.get('currentStepIndex')}
+                               onChange={::this.onNavigationChange} />
+        </div>
+      );
+    }
   }
 
   // If the navigation is currently hidden or there is only a single step
   // within the wizard, don't render.
   renderDirectionalNavigation (state) {
-    if (state.get('isNavigationHidden') || this.getSteps().length <= 1) {
-      return;
-    }
-
-    return (
-      <HalcyonDirectionalNavigation currentStepIndex={this.getCurrentStepIndex()}
-                                    onChange={::this.attemptToNavigateToIndex}
-                                    disableBackwardNavigation={this.isOnFirstStep()}
-                                    disableForwardNavigation={this.isOnLastStep()} />
-    );
-  }
-
-  renderBreadCrumbs () {
-    const parents = this.props.halcyon
-      .takeUntil(w => w.get('instance') === this)
-      .map(p => p.get('instance').props.name)
-      .toJS();
-
-    if (parents.length) {
-      return parents.map((p, idx) =>
-        <p key={idx}>{p}</p>
+    if (this.isActive() && this.getSteps().length > 1) {
+      return (
+        <HalcyonDirectionalNavigation currentStepIndex={this.getCurrentStepIndex()}
+                                      onChange={::this.attemptToNavigateToIndex}
+                                      disableBackwardNavigation={this.isOnFirstStep()}
+                                      disableForwardNavigation={this.isOnLastStep()} />
       );
     }
   }
 
+  renderBreadCrumbs (state) {
+    if (this.isActive()) {
+      return <HalcyonBreadcrumbs />
+    }
+  }
+
   renderWizardState (state) {
-    const currentStep   = this.getSteps()[this.getCurrentStepIndex()];
-    const viewportWidth = state.get('isNavigationHidden') ?
-      12 : 9;
+    const currentStep = this.getSteps()[this.getCurrentStepIndex()];
 
     return (
-      <div className='row'>
-        {this.renderStepSelector(state)}
-        <div className={`halcyon__viewport col-sm-${viewportWidth}`}>
+      <div className='halcyon-wizard'>
+        {this.renderSidebar(state)}
+        <div className='halcyon-wizard__viewport'>
           {this.renderBreadCrumbs()}
           {this.renderStepComponent(currentStep)}
-          {this.renderDirectionalNavigation(state)}
         </div>
       </div>
     );
   }
 
   render () {
-    const state = this.getCurrentState();
+    const state = this.getState();
 
     return (
-      <div className='halcyon'>
+      <div className='halcyon-container'>
         {state && this.renderWizardState(state)}
       </div>
     );

@@ -4,11 +4,6 @@ import EditCandy from './steps/edit-candy';
 import EditInfo  from './steps/edit-info';
 
 export default class CarnivalWizard extends React.Component {
-  static propTypes = {
-    // model    : React.PropTypes.object.isRequired,
-    // onSubmit : React.PropTypes.func.isRequired
-  }
-
   constructor () {
     super();
   }
@@ -17,7 +12,9 @@ export default class CarnivalWizard extends React.Component {
     const { model, onSubmit } = this.props;
 
     return (
-      <HalcyonWizard name='Carnival Wizard' model={model} onSubmit={onSubmit}>
+      <HalcyonWizard name='Carnival Wizard'
+                     model={model}
+                     onSubmit={onSubmit}>
         <EditCandy name='Edit Candy!' />
         <EditInfo />
       </HalcyonWizard>

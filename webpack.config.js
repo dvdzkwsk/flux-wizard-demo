@@ -37,14 +37,25 @@ module.exports = {
     }
   },
   module : {
-    loaders : [{
-      test    : [/\.(js|jsx)?$/],
-      include : [
-        path.resolve(__dirname + '/example'),
-        path.resolve(__dirname + '/src')
-      ],
-      exclude : /node_modules/,
-      loaders : ['react-hot', 'babel?stage=0']
-    }]
+    loaders : [
+      {
+        test    : [/\.(js|jsx)?$/],
+        include : [
+          path.resolve(__dirname + '/example'),
+          path.resolve(__dirname + '/src')
+        ],
+        exclude : /node_modules/,
+        loaders : ['react-hot', 'babel?stage=0']
+      },
+      {
+        test : /\.scss$/,
+        loaders : [
+          'style-loader',
+          'css-loader',
+          'autoprefixer?browsers=last 2 version',
+          'sass-loader'
+        ]
+      }
+    ]
   }
 };

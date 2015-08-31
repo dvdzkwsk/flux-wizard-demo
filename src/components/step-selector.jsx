@@ -1,4 +1,5 @@
 import React from 'react';
+import { getComponentTitle } from '../lib/component';
 
 export default class HalcyonStepNavigation extends React.Component {
   static propTypes = {
@@ -30,37 +31,21 @@ export default class HalcyonStepNavigation extends React.Component {
     }
   }
 
-  getTitleForStep (step) {
-    return step.props.name || step.type.name.replace(/([a-z](?=[A-Z]))/g, '$1 ');
-  }
-
-  renderStepTabs () {
-    return this.props.steps.map((step, idx) => {
-      const isActive = idx === this.props.currentStepIndex;
-
-      return (
-        <li key={idx} className={isActive ? 'active' : ''}>
-          <a href='#'
-             disabled={this.props.disabled}
-             onClick={this.onClick.bind(this, idx)}>
-             <span>{this.getTitleForStep(step)}</span>
-          </a>
-        </li>
-      );
-    });
-  }
-
   render () {
+    const stepTitles = this.props.steps.map(getComponentTitle);
+
     return (
       <ul>
-        {this.props.steps.map((step, idx) => {
+        {stepTitles.map((title, idx) => {
           const isActive = idx === this.props.currentStepIndex;
           const classes  = `panel panel-default ${isActive ? 'active' : ''}`;
 
           return (
-            <div className={classes} onClick={this.onClick.bind(this, idx)}>
+            <div key={idx}
+                className={classes}
+                onClick={this.onClick.bind(this, idx)}>
               <div className='panel-body'>
-                <h3>{this.getTitleForStep(step)}</h3>
+                <h3>{title}</h3>
               </div>
             </div>
           );

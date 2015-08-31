@@ -1,0 +1,22 @@
+html,body,#root {
+  height: 100%;
+}
+
+.halcyon-container {
+  height: 100%;
+  display: flex;
+}
+
+.halcyon-wizard {
+  display: flex;
+  height: 100%;
+  width: 100%;
+
+  &__sidebar {
+    flex-grow: 1;
+  }
+
+  &__viewport {
+    flex-grow: 6;
+  }
+}

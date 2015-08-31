@@ -2,8 +2,7 @@ import {
   HALCYON_WIZARD_CREATE,
   HALCYON_WIZARD_DESTROY,
   HALCYON_WIZARD_STEP_CHANGE,
-  HALCYON_WIZARD_NAVIGATION_HIDE,
-  HALCYON_WIZARD_NAVIGATION_SHOW
+  HALCYON_WIZARD_OPEN_INDEX
 } from '../constants/wizard';
 
 export function createWizard (instance) {
@@ -33,20 +32,11 @@ export function changeWizardStep (instance, index) {
   };
 }
 
-export function hideNavigation (instance) {
+export function openWizardIndex (index) {
   return {
-    type : HALCYON_WIZARD_NAVIGATION_HIDE,
+    type : HALCYON_WIZARD_OPEN_INDEX,
     payload : {
-      instance
-    }
-  };
-}
-
-export function showNavigation (instance) {
-  return {
-    type : HALCYON_WIZARD_NAVIGATION_SHOW,
-    payload : {
-      instance
+      index
     }
   };
 }
