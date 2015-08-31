@@ -5,8 +5,8 @@ import EditPrice from './steps/edit-price';
 
 export default class CottonCandyWizard extends React.Component {
   static propTypes = {
-    model    : React.PropTypes.object.isRequired,
-    onSubmit : React.PropTypes.func.isRequired
+    // model    : React.PropTypes.object.isRequired,
+    // onSubmit : React.PropTypes.func.isRequired
   }
 
   constructor () {

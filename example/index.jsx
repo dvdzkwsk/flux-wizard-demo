@@ -1,12 +1,13 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import reducers from './reducers';
-import UserView from './views/user';
+import CarnivalWizard from './components/wizards/carnival';
 
 const store = createStore(combineReducers(reducers));
 
-export default class App extends React.Component {
+export default class Root extends React.Component {
   constructor () {
     super();
   }
@@ -14,10 +15,10 @@ export default class App extends React.Component {
   render () {
     return (
       <Provider store={store}>
-        {() => <UserView />}
+        <CarnivalWizard />
       </Provider>
     );
   }
 }
 
-React.render(<App />, document.getElementById('mount-node'));
+ReactDOM.render(<Root />, document.getElementById('root'));

@@ -10,7 +10,7 @@ import HalcyonDirectionalNavigation from './directional-navigation';
 }))
 export default class HalcyonWizard extends React.Component {
   static propTypes = {
-    model : React.PropTypes.object.isRequired
+    // model : React.PropTypes.object.isRequired
   }
 
   constructor () {
@@ -59,7 +59,7 @@ export default class HalcyonWizard extends React.Component {
     this.createWizard();
   }
 
-  componentDidUnmount () {
+  componentWillUnmount () {
     this.destroyWizard();
   }
 
@@ -237,6 +237,7 @@ export default class HalcyonWizard extends React.Component {
         <div className={`halcyon__viewport col-sm-${viewportWidth}`}>
           {this.renderBreadCrumbs()}
           {this.renderStepComponent(currentStep)}
+          {this.renderDirectionalNavigation(state)}
         </div>
       </div>
     );
