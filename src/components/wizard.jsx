@@ -134,9 +134,8 @@ export default class HalcyonWizard extends React.Component {
   * @returns {Map|Undefined} State of the current wizard instance.
   */
   getCurrentState () {
-    const instances = this.props.halcyon;
-
-    return instances && instances.get(this);
+    return this.props.halcyon
+      .find(w => w.get('instance') === this);
   }
 
   /**
@@ -191,10 +190,11 @@ export default class HalcyonWizard extends React.Component {
     if (state.get('isNavigationHidden')) return;
 
     return (
-      <HalcyonStepSelector steps={this.getSteps()}
-                           disabled={this.isDisabled()}
-                           currentStepIndex={this.getCurrentStepIndex()}
-                           onChange={::this.onNavigationChange} />
+      <div className='col-sm-3 halcyon__step-selector'>
+        <HalcyonStepSelector steps={this.getSteps()}
+                             currentStepIndex={state.get('currentStepIndex')}
+                             onChange={::this.onNavigationChange} />
+      </div>
     );
   }
 
@@ -208,22 +208,36 @@ export default class HalcyonWizard extends React.Component {
     return (
       <HalcyonDirectionalNavigation currentStepIndex={this.getCurrentStepIndex()}
                                     onChange={::this.attemptToNavigateToIndex}
-                                    disabled={this.isDisabled()}
                                     disableBackwardNavigation={this.isOnFirstStep()}
                                     disableForwardNavigation={this.isOnLastStep()} />
     );
   }
 
+  renderBreadCrumbs () {
+    const parents = this.props.halcyon
+      .takeUntil(w => w.get('instance') === this)
+      .map(p => p.get('instance').props.name)
+      .toJS();
+
+    if (parents.length) {
+      return parents.map((p, idx) =>
+        <p key={idx}>{p}</p>
+      );
+    }
+  }
+
   renderWizardState (state) {
-    const currentStep = this.getSteps()[this.getCurrentStepIndex()];
+    const currentStep   = this.getSteps()[this.getCurrentStepIndex()];
+    const viewportWidth = state.get('isNavigationHidden') ?
+      12 : 9;
 
     return (
-      <div>
+      <div className='row'>
         {this.renderStepSelector(state)}
-        <div className='halcyon__viewport'>
+        <div className={`halcyon__viewport col-sm-${viewportWidth}`}>
+          {this.renderBreadCrumbs()}
           {this.renderStepComponent(currentStep)}
         </div>
-        {this.renderDirectionalNavigation(state)}
       </div>
     );
   }

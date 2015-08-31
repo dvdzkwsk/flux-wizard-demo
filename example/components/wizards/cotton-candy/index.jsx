@@ -1,9 +1,9 @@
 import React from 'react';
 import { Wizard as HalcyonWizard } from 'halcyon';
-import EditUserInfoStep from './edit-user-info-step';
-import EditUserFriendsStep from './edit-user-friends-step';
+import EditFlavor from './steps/edit-flavor';
+import EditPrice from './steps/edit-price';
 
-export default class EditUserWizard extends React.Component {
+export default class CottonCandyWizard extends React.Component {
   static propTypes = {
     model    : React.PropTypes.object.isRequired,
     onSubmit : React.PropTypes.func.isRequired
@@ -18,8 +18,8 @@ export default class EditUserWizard extends React.Component {
 
     return (
       <HalcyonWizard model={model} onSubmit={onSubmit}>
-        <EditUserInfoStep />
-        <EditUserFriendsStep />
+        <EditFlavor />
+        <EditPrice />
       </HalcyonWizard>
     );
   }

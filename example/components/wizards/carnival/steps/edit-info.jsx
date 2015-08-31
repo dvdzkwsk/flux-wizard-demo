@@ -1,14 +1,16 @@
 import React from 'react';
 import { Step as HalcyonStep } from 'halcyon';
 
-export default class EditUserFriendsStep extends HalcyonStep {
+export default class EditInfo extends HalcyonStep {
   constructor () {
     super();
   }
 
   render () {
     return (
-      <h2>Edit User Friends</h2>
+      <div>
+        <h2>Edit Info!</h2>
+      </div>
     );
   }
 }

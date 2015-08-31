@@ -31,7 +31,7 @@ export default class HalcyonStepNavigation extends React.Component {
   }
 
   getTitleForStep (step) {
-    return step.type.name.replace(/([a-z](?=[A-Z]))/g, '$1 ');
+    return step.props.name || step.type.name.replace(/([a-z](?=[A-Z]))/g, '$1 ');
   }
 
   renderStepTabs () {
@@ -52,13 +52,20 @@ export default class HalcyonStepNavigation extends React.Component {
 
   render () {
     return (
-      <div className='halcyon__navigation'>
-        <nav className='navbar navbar-static-top'>
-          <ul className='nav nav-tabs'>
-            {this.renderStepTabs()}
-          </ul>
-        </nav>
-      </div>
+      <ul>
+        {this.props.steps.map((step, idx) => {
+          const isActive = idx === this.props.currentStepIndex;
+          const classes  = `panel panel-default ${isActive ? 'active' : ''}`;
+
+          return (
+            <div className={classes} onClick={this.onClick.bind(this, idx)}>
+              <div className='panel-body'>
+                <h3>{this.getTitleForStep(step)}</h3>
+              </div>
+            </div>
+          );
+        })}
+      </ul>
     );
   }
 }
