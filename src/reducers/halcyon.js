@@ -32,7 +32,7 @@ const actions = {
 
   [HALCYON_WIZARD_DESTROY] : (state, { instance }) => {
     const wizards = state.get('wizards')
-      .filter(wizard => wizard.get('instance') === instance);
+      .filter(wizard => wizard.get('instance') !== instance);
 
     return state.set('wizards', wizards);
   },

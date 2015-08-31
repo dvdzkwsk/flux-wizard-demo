@@ -12,6 +12,7 @@ import './wizard.scss';
 }))
 export default class HalcyonWizard extends React.Component {
   static propTypes = {
+    // name : React.PropTypes.object.isRequired
     // model : React.PropTypes.object.isRequired
   }
 
@@ -62,7 +63,7 @@ export default class HalcyonWizard extends React.Component {
   }
 
   componentWillUnmount () {
-    // this.destroyWizard();
+    this.destroyWizard();
   }
 
   componentDidUpdate (prevProps) {
@@ -182,8 +183,6 @@ export default class HalcyonWizard extends React.Component {
     const selfIdx   = this.getState().get('index');
     const activeIdx = this.props.halcyon.get('activeWizardIndex');
 
-    console.log('self idx = ', selfIdx);
-    console.log('target idx = ', activeIdx);
     return selfIdx === activeIdx;
   }
 
