@@ -1,11 +1,10 @@
 import React from 'react';
 import { Wizard as HalcyonWizard } from 'halcyon';
-import EditCandy from './steps/edit-candy';
-import EditAttendees from './steps/edit-attendees';
+import EditInfo from './steps/info';
 
-export default class CarnivalWizard extends React.Component {
+export default class AttendeeWizard extends React.Component {
   static defaultProps = {
-    title : 'Carnival Wizard'
+    title : 'Attendee Wizard'
   }
 
   constructor () {
@@ -15,8 +14,7 @@ export default class CarnivalWizard extends React.Component {
   render () {
     return (
       <HalcyonWizard {...this.props}>
-        <EditCandy />
-        <EditAttendees />
+        <EditInfo />
       </HalcyonWizard>
     );
   }

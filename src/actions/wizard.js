@@ -6,11 +6,11 @@ import {
   HALCYON_WIZARD_OPEN_INDEX
 } from '../constants/wizard';
 
-export function createWizard (instance) {
+export function createWizard (instance, model) {
   return {
     type : HALCYON_WIZARD_CREATE,
     payload : {
-      instance
+      instance, model
     }
   };
 }

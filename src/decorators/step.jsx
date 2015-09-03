@@ -46,8 +46,10 @@ export default function halcyonStepDecorator (Component) {
     }
 
     setProperty (path, value) {
+      const pathArr = Array.isArray(path) ? path : path.split('.');
+
       this.setState({
-        model : this.state.model.setIn(path, value)
+        model : this.state.model.setIn(pathArr, value)
       });
     }
 
@@ -58,17 +60,17 @@ export default function halcyonStepDecorator (Component) {
     }
 
     renderResetModelButton () {
-      // if (this.state.dirty) {
-      //   return (
-      //     <button className='btn btn-block btn-default'
-      //             onClick={() => this.setState({
-      //               dirty : false,
-      //               model : this.props.model
-      //             })}>
-      //       Undo Changes
-      //     </button>
-      //   );
-      // }
+      if (this.state.dirty) {
+        return (
+          <button className='btn btn-block btn-default'
+                  onClick={() => this.setState({
+                    dirty : false,
+                    model : this.props.model
+                  })}>
+            Undo Changes
+          </button>
+        );
+      }
     }
 
     render () {
