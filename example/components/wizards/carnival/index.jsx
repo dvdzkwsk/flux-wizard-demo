@@ -16,7 +16,6 @@ export default class CarnivalWizard extends React.Component {
     return (
       <HalcyonWizard {...this.props}>
         <EditCandy />
-        <EditAttendees />
       </HalcyonWizard>
     );
   }
