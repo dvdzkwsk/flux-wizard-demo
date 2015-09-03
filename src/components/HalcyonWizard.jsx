@@ -196,9 +196,9 @@ export default class HalcyonWizard extends React.Component {
   *
   */
   isActive () {
-    const selfDepth = this.getState().get('depth');
+    const selfDepth = this._state.get('depth');
 
-    return selfDepth === this.props.halcyon.size;
+    return (selfDepth + 1) === this.props.halcyon.size;
   }
 
   // ----------------------------------
@@ -239,21 +239,58 @@ export default class HalcyonWizard extends React.Component {
     });
   }
 
+  renderBreadcrumbs () {
+    if (!this.isActive()) return;
+
+    return <HalcyonBreadcrumbs />;
+  }
+
+  renderStepSelector () {
+    if (!this.isActive()) return;
+
+    return (
+      <HalcyonStepSelector steps={this.getSteps()}
+                           onSelect={::this.attemptToNavigateToIndex} />
+    );
+  }
+
+  renderDirectionalNavigation () {
+
+  }
+
+  /**
+  * Wizard now has a valid state attached to it, so we can render its current
+  * step. However, due to UI requirements, we don't want to display redundant
+  * step selectors/breadcrumbs/etc. if this is not the currently active wizard,
+  * which is why the rendering logic for those components is separated into
+  * smaller methods.
+  *
+  * NOTE: this differentation _cannot_ be separated in another render method
+  * with different markup, because then subwizards would be re-rendered and
+  * consequently lose their state (since state is tied to the component
+  * instance). This should be investigated more thoroughly in the future.
+  */
   renderWizardReadyState (state) {
     return (
       <div className='halcyon-wizard'>
-        <HalcyonStepSelector steps={this.getSteps()}
-                             onSelect={::this.attemptToNavigateToIndex} />
+        {this.renderStepSelector()}
         <div className='halcyon-wizard__viewport'>
-          <HalcyonBreadcrumbs />
+          {this.renderBreadcrumbs()}
           <div className='halcyon-wizard__viewport__step'>
             {this.renderStepComponent(this.getCurrentStep())}
           </div>
+          {this.renderDirectionalNavigation()}
         </div>
       </div>
     );
   }
 
+  /**
+  * Render a base container with the wizard state only once the state exists.
+  * This is important because since the component is responsible for creating
+  * its own state in the Halcyon wizards reducer, the first render cycle won't
+  * have a valid state.
+  */
   render () {
     return (
       <div className='halcyon-container'>
