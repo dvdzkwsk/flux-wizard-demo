@@ -11,11 +11,6 @@ import './wizard.scss';
   halcyon : state.halcyon
 }))
 export default class HalcyonWizard extends React.Component {
-  static propTypes = {
-    // name : React.PropTypes.object.isRequired
-    // model : React.PropTypes.object.isRequired
-  }
-
   constructor () {
     super();
   }
@@ -26,25 +21,27 @@ export default class HalcyonWizard extends React.Component {
   * Halcyon-specific actions because callers no longer need to specify `this`
   * as the first argument to specify the target instance.
   * @example
-  * const halcyonActions = {
+  * const actions = {
   *   foo : function () { ... }
   * };
   *
   * // instead of doing:
-  * this.props.dispatch(halcyonActions.foo(this, ...));
+  * this.props.dispatch(actions.foo(this, ...));
   *
   * // you can do:
-  * this.bindActionCreatorsToWizard(halcyonActions);
+  * this.bindActionCreatorsToSelf(actions);
   * this.foo(...);
   * @param {object} actions - object that defines a map of functions where
   * the key is the function name and the value is its definition.
+  * @returns {object} instance - returns `this` for chainability.
   */
-  bindActionCreatorsToWizard (actions) {
+  bindActionCreatorsToSelf (actions) {
     const boundActions = bindActionCreators(actions, this.props.dispatch);
 
+    this._actions = this._actions || {};
     for (const key in boundActions) {
       if (!this[key]) {
-        this[key] = boundActions[key].bind(null, this);
+        this._actions[key] = boundActions[key].bind(null, this);
       } else {
         console.warn([
           `Cannot apply action ${key} to HalcyonWizard instance because the`,
@@ -52,24 +49,26 @@ export default class HalcyonWizard extends React.Component {
         ].join(' '));
       }
     }
+    return this;
   }
 
   // ----------------------------------
   // Native Life Cycle Hooks
   // ----------------------------------
   componentWillMount () {
-    this.bindActionCreatorsToWizard(WizardActions);
-    this.createWizard();
+    this.bindActionCreatorsToSelf(WizardActions);
+    this._actions.createWizard();
   }
 
+  // TODO: fix duplicate destroyWizard() calls when the wizard is
+  // submitted or cancelled.
   componentWillUnmount () {
-    this.destroyWizard();
+    this._actions.destroyWizard();
   }
 
   componentDidUpdate (prevProps) {
-    const prevState = prevProps.halcyon.get('wizards')
-      find(x => x.get('instance') === this);
     const currState = this.getState();
+    const prevState = this.getStateFrom(prevProps.halcyon.get('wizards'));
 
     // If this hook is called immediately after the wizard was created (during
     // the first render cycle) then return early since nothing actually changed.
@@ -77,11 +76,35 @@ export default class HalcyonWizard extends React.Component {
 
     // if state hasn't changed then noop.
     if (currState === prevState) return;
+
+    // do we need to do anything here? State has changed at this point.
   }
 
   // ----------------------------------
   // Halcyon Life Cycle Definition
   // ----------------------------------
+  isCurrentStepExitable () {
+    if (
+      typeof this.refs.step.shouldStepLeave === 'function' &&
+      !this.refs.step.shouldStepLeave()
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  isCurrentStepValid () {
+    if (
+      typeof this.refs.step.isStepValid === 'function' &&
+      !this.refs.step.isStepValid()
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   /**
   * Determines whether or not a navigation attempt should be allowed to
   * continue. By default will always return true; to prevent a navigation
@@ -89,7 +112,7 @@ export default class HalcyonWizard extends React.Component {
   * @returns {boolean} Whether or not to stop a navigation attempt.
   */
   shouldWizardNavigate () {
-    return true;
+    return this.isCurrentStepExitable() && this.isCurrentStepValid();
   }
 
   // ----------------------------------
@@ -101,22 +124,17 @@ export default class HalcyonWizard extends React.Component {
   * @param {integer} Index of the target step.
   */
   attemptToNavigateToIndex (idx) {
-    if (this.shouldWizardNavigate() && this.refs.step.shouldStepLeave()) {
+    if (this.shouldWizardNavigate()) {
       this.navigateToIndex(idx);
     }
   }
 
   /**
-  * Updates the active step of the wizard to the target index. Invokes
-  * "stepWillLeave" life cycle method in HalcyonStep before the step is
-  * unmounted.
+  * Updates the active step of the wizard to the target index.
   * @param {integer} Index of the target step.
   */
   navigateToIndex (idx) {
-    if (typeof this.refs.step.stepWillLeave === 'function') {
-      this.refs.step.stepWillLeave();
-    }
-    this.changeWizardStep(idx);
+    this._actions.changeWizardStep(idx);
   }
 
   /**
@@ -132,12 +150,24 @@ export default class HalcyonWizard extends React.Component {
   // ----------------------------------
   // State Convenience Methods
   // ----------------------------------
+  // TODO: Once MVP is complete, getState() methods can be optimized so that
+  // the wizards collection is not filtered every single time a method
+  // requests the current state.
+  // ---------------------------------
+
   /**
-  * @returns {Map|Undefined} State of the current wizard instance.
+  * @returns {Immutable.Map} State of the wizard instance if it exists i
+  * the provided wizards collection.
+  */
+  getStateFrom (wizards) {
+    return wizards.find(w => w.get('instance') === this);
+  }
+
+  /**
+  * @returns {Immutable.Map} State of the current wizard instance.
   */
   getState () {
-    return this.props.halcyon.get('wizards')
-      .find(w => w.get('instance') === this);
+    return this.getStateFrom(this.props.halcyon.get('wizards'));
   }
 
   /**
@@ -187,6 +217,20 @@ export default class HalcyonWizard extends React.Component {
   }
 
   // ----------------------------------
+  // Event Handlers
+  // ----------------------------------
+  _onCancel () {
+    if (typeof this.props.onCancel === 'function') {
+      this.props.onCancel();
+    }
+    this.destroyWizard();
+  }
+
+  _onSubmit () {
+
+  }
+
+  // ----------------------------------
   // Rendering Logic
   // ----------------------------------
   renderStepComponent (component) {
@@ -197,45 +241,62 @@ export default class HalcyonWizard extends React.Component {
   }
 
   renderSidebar (state) {
-    if (this.isActive()) {
-      return (
-        <div className='halcyon-wizard__sidebar'>
-          <HalcyonStepSelector steps={this.getSteps()}
-                               currentStepIndex={state.get('currentStepIndex')}
-                               onChange={::this.onNavigationChange} />
-        </div>
-      );
-    }
+    return (
+      <div className='halcyon-wizard__sidebar'>
+        <HalcyonStepSelector steps={this.getSteps()}
+                             currentStepIndex={state.get('currentStepIndex')}
+                             onChange={::this.onNavigationChange} />
+      </div>
+    );
   }
 
-  // If the navigation is currently hidden or there is only a single step
-  // within the wizard, don't render.
   renderDirectionalNavigation (state) {
-    if (this.isActive() && this.getSteps().length > 1) {
-      return (
-        <HalcyonDirectionalNavigation currentStepIndex={this.getCurrentStepIndex()}
-                                      onChange={::this.attemptToNavigateToIndex}
-                                      disableBackwardNavigation={this.isOnFirstStep()}
-                                      disableForwardNavigation={this.isOnLastStep()} />
-      );
-    }
+    return (
+      <HalcyonDirectionalNavigation currentStepIndex={this.getCurrentStepIndex()}
+                                    onChange={::this.attemptToNavigateToIndex}
+                                    disableBackwardNavigation={this.isOnFirstStep()}
+                                    disableForwardNavigation={this.isOnLastStep()} />
+    );
   }
 
-  renderBreadCrumbs (state) {
-    if (this.isActive()) {
-      return <HalcyonBreadcrumbs />
-    }
+  renderFooter (state) {
+    return (
+      <div className='halcyon-wizard__footer clearfix'>
+        {this.renderDirectionalNavigation()}
+        <div className='pull-right'>
+          <button className='btn btn-danger' onClick={::this._onCancel}>
+            Cancel
+          </button>
+          <button className='btn btn-success'>
+            Submit
+          </button>
+        </div>
+      </div>
+    );
   }
 
-  renderWizardState (state) {
+  renderInactiveState (state) {
+    const currentStep = this.getSteps()[this.getCurrentStepIndex()];
+
+    return (
+      <div className='halcyon-wizard'>
+        <div className='halcyon-wizard__viewport'>
+          {this.renderStepComponent(currentStep)}
+        </div>
+      </div>
+    );
+  }
+
+  renderActiveState (state) {
     const currentStep = this.getSteps()[this.getCurrentStepIndex()];
 
     return (
       <div className='halcyon-wizard'>
         {this.renderSidebar(state)}
         <div className='halcyon-wizard__viewport'>
-          {this.renderBreadCrumbs()}
+          <HalcyonBreadcrumbs />
           {this.renderStepComponent(currentStep)}
+          {this.renderFooter(state)}
         </div>
       </div>
     );
@@ -246,7 +307,12 @@ export default class HalcyonWizard extends React.Component {
 
     return (
       <div className='halcyon-container'>
-        {state && this.renderWizardState(state)}
+        {state && (
+          this.isActive() ?
+            this.renderActiveState(state) :
+            this.renderInactiveState(state)
+          )
+        }
       </div>
     );
   }

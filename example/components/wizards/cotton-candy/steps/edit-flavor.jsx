@@ -1,7 +1,8 @@
 import React from 'react';
-import { Step as HalcyonStep } from 'halcyon';
+import { step as WizardStep } from 'halcyon';
 
-export default class EditFlavor extends HalcyonStep {
+@WizardStep
+export default class EditFlavor extends React.Component {
   constructor () {
     super();
   }

@@ -31,14 +31,26 @@ const actions = {
   },
 
   [HALCYON_WIZARD_DESTROY] : (state, { instance }) => {
-    const wizards = state.get('wizards')
-      .filter(wizard => wizard.get('instance') !== instance);
+    return state.withMutations(state => {
+      const wizards   = state.get('wizards');
+      const wizardPos = wizards.findIndex(x => x.get('instance') === instance);
 
-    return state.set('wizards', wizards);
+      if (wizardPos === -1) return;
+
+      if (wizardPos === state.get('activeWizardIndex')) {
+        if (wizardPos === 0) {
+          state.set('activeWizardIndex', null)
+        } else {
+          state.set('activeWizardIndex', wizardPos - 1);
+        }
+      }
+
+      state.set('wizards', wizards.delete(wizardPos));
+    });
   },
 
   [HALCYON_WIZARD_STEP_CHANGE] : (state, { instance, index }) => {
-    const wizards  = state.get('wizards');
+    const wizards = state.get('wizards');
 
     // update target wizard
     const wizardPos = wizards.findIndex(x => x.get('instance') === instance);

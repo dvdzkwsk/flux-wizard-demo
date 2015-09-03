@@ -1,5 +1,7 @@
 export default {
-  Step     : require('./components/step'),
   Wizard   : require('./components/wizard'),
-  reducers : require('./reducers')
+  step     : require('./decorators/step'),
+  wizard   : require('./decorators/wizard'),
+  reducers : require('./reducers'),
+  createWizard : require('./utils/create-wizard')
 };

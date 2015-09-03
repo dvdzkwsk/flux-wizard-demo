@@ -1,8 +1,9 @@
 import React from 'react';
 import CottonCandyWizard from '../../cotton-candy';
-import { Step as HalcyonStep } from 'halcyon';
+import { step as WizardStep } from 'halcyon';
 
-export default class EditCandy extends HalcyonStep {
+@WizardStep
+export default class EditCandy extends React.Component {
   constructor () {
     super();
     this.state = {
@@ -11,18 +12,30 @@ export default class EditCandy extends HalcyonStep {
     };
   }
 
+  componentDidMount () {
+    console.log('Edit Candy step mounted!');
+  }
+
   openWizard () {
-    this.hideParentNavigation();
     this.setState({
       hasOpenWizard : true,
       model : { price : '1.00', flavor : 'blue' }
     });
   }
 
+  _onCloseWizard () {
+    this.setState({
+      hasOpenWizard : false,
+      model : null
+    });
+  }
+
   render () {
     if (this.state.hasOpenWizard) {
       return (
-        <CottonCandyWizard model={this.state.model} />
+        <CottonCandyWizard name='Cotton Candy Wizard'
+                           model={this.state.model}
+                           onCancel={::this._onCloseWizard} />
       );
     }
 

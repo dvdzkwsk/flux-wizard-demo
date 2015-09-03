@@ -35,14 +35,14 @@ export default class HalcyonDirectionalNavigation extends React.Component {
     return (
       <div className='halcyon__directional-navigation clearfix'>
         <div className='pull-left'>
-          <button className='btn btn-info pull-left'
+          <button className='btn btn-default'
                   disabled={disabled || disableBackwardNavigation}
                   onClick={this.handleClick.bind(this, currentStepIndex - 1)}>
             Previous
           </button>
         </div>
         <div className='pull-right'>
-          <button className='btn btn-info pull-right'
+          <button className='btn btn-default'
                   disabled={disabled || disableForwardNavigation }
                   onClick={this.handleClick.bind(this, currentStepIndex + 1)}>
             Next
