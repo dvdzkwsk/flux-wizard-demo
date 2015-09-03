@@ -242,6 +242,8 @@ export default class HalcyonWizard extends React.Component {
   renderWizardReadyState (state) {
     return (
       <div className='halcyon-wizard'>
+        <HalcyonStepSelector steps={this.getSteps()}
+                             onSelect={::this.attemptToNavigateToIndex} />
         <div className='halcyon-wizard__viewport'>
           <HalcyonBreadcrumbs />
           <div className='halcyon-wizard__viewport__step'>
