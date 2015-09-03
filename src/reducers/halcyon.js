@@ -2,6 +2,7 @@ import Immutable from 'immutable';
 import {
   HALCYON_WIZARD_CREATE,
   HALCYON_WIZARD_DESTROY,
+  HALCYON_WIZARD_SET_MODEL,
   HALCYON_WIZARD_STEP_CHANGE,
   HALCYON_WIZARD_OPEN_INDEX
 } from '../constants/wizard';
@@ -21,8 +22,9 @@ const actions = {
         .push(Immutable.Map({
           instance          : instance,
           currentStepIndex  : 0,
-          index             : wizardCt
-        }))
+          index             : wizardCt,
+          model             : null
+        }));
 
       state
         .set('wizards', updatedWizards)
@@ -47,6 +49,18 @@ const actions = {
 
       state.set('wizards', wizards.delete(wizardPos));
     });
+  },
+
+  [HALCYON_WIZARD_SET_MODEL] : (state, { instance, model }) => {
+    const wizards = state.get('wizards');
+
+    // update target wizard
+    const wizardPos = wizards.findIndex(x => x.get('instance') === instance);
+    const wizard    = wizards.get(wizardPos)
+      .set('model', model);
+
+    // update wizard in collection
+    return state.set('wizards', wizards.set(wizardPos, wizard));
   },
 
   [HALCYON_WIZARD_STEP_CHANGE] : (state, { instance, index }) => {

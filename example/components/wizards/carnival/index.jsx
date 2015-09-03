@@ -4,6 +4,10 @@ import EditCandy from './steps/edit-candy';
 import EditInfo from './steps/edit-info';
 
 export default class CarnivalWizard extends React.Component {
+  static defaultProps = {
+    title : 'Carnival Wizard'
+  }
+
   constructor () {
     super();
   }

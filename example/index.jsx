@@ -7,6 +7,15 @@ import CarnivalWizard from './components/wizards/carnival';
 
 const store = createStore(combineReducers(reducers));
 
+const _sampleModel = {
+  candies : [
+    { name : 'Snickers', price : '1' },
+    { name : 'Reese\'s', price : '1.5' },
+    { name : 'Lollipop', price : '0.75' }
+  ]
+};
+
+
 export default class Root extends React.Component {
   constructor () {
     super();
@@ -15,7 +24,7 @@ export default class Root extends React.Component {
   render () {
     return (
       <Provider store={store}>
-        <CarnivalWizard />
+        <CarnivalWizard model={_sampleModel} />
       </Provider>
     );
   }

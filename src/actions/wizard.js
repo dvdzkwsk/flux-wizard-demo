@@ -1,6 +1,7 @@
 import {
   HALCYON_WIZARD_CREATE,
   HALCYON_WIZARD_DESTROY,
+  HALCYON_WIZARD_SET_MODEL,
   HALCYON_WIZARD_STEP_CHANGE,
   HALCYON_WIZARD_OPEN_INDEX
 } from '../constants/wizard';
@@ -19,6 +20,15 @@ export function destroyWizard (instance) {
     type : HALCYON_WIZARD_DESTROY,
     payload : {
       instance
+    }
+  };
+}
+
+export function setWizardModel (instance, model) {
+  return {
+    type : HALCYON_WIZARD_SET_MODEL,
+    payload : {
+      instance, model
     }
   };
 }

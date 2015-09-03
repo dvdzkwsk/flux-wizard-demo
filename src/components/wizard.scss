@@ -1,10 +1,6 @@
-html,body,#root {
+body, html, #root {
+  width: 100%;
   height: 100%;
-}
-
-.halcyon-container {
-  height: 100%;
-  display: flex;
 }
 
 .halcyon-wizard {
@@ -17,6 +13,10 @@ html,body,#root {
   }
 
   &__viewport {
-    flex-grow: 6;
+    flex-grow: 5;
+
+    &__step {
+      padding: 1rem;
+    }
   }
 }

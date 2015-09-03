@@ -1,4 +1,5 @@
 import React from 'react';
+import Immutable from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as WizardActions from '../actions/wizard';
@@ -11,6 +12,16 @@ import './wizard.scss';
   halcyon : state.halcyon
 }))
 export default class HalcyonWizard extends React.Component {
+  static propTypes = {
+    // model    : React.PropTypes.object.isRequired,
+    // onCancel : React.PropTypes.func.isRequired,
+    // onSubmit : React.PropTypes.func.isRequired
+  }
+
+  static defaultProps = {
+
+  }
+
   constructor () {
     super();
   }
@@ -52,12 +63,19 @@ export default class HalcyonWizard extends React.Component {
     return this;
   }
 
+  // TODO: check if already immutable
+  setModel (model) {
+    console.log('setting model');
+    this._actions.setWizardModel(Immutable.fromJS(model));
+  }
+
   // ----------------------------------
   // Native Life Cycle Hooks
   // ----------------------------------
   componentWillMount () {
     this.bindActionCreatorsToSelf(WizardActions);
     this._actions.createWizard();
+    this.setModel(Immutable.fromJS(this.props.model));
   }
 
   // TODO: fix duplicate destroyWizard() calls when the wizard is
@@ -85,8 +103,8 @@ export default class HalcyonWizard extends React.Component {
   // ----------------------------------
   isCurrentStepExitable () {
     if (
-      typeof this.refs.step.shouldStepLeave === 'function' &&
-      !this.refs.step.shouldStepLeave()
+      typeof this.refs.step.shouldStepExit === 'function' &&
+      !this.refs.step.shouldStepExit()
     ) {
       return false;
     }
@@ -134,6 +152,7 @@ export default class HalcyonWizard extends React.Component {
   * @param {integer} Index of the target step.
   */
   navigateToIndex (idx) {
+    this._actions.setWizardModel(this.refs.step.state.model);
     this._actions.changeWizardStep(idx);
   }
 
@@ -222,8 +241,12 @@ export default class HalcyonWizard extends React.Component {
   _onCancel () {
     if (typeof this.props.onCancel === 'function') {
       this.props.onCancel();
+    } else {
+      console.warn([
+        'No cancel event provided to HalcyonWizard instance; wizard will',
+        'not destroy itself, it must be unmounted in its parent component.'
+      ].join(' '));
     }
-    this.destroyWizard();
   }
 
   _onSubmit () {
@@ -236,11 +259,13 @@ export default class HalcyonWizard extends React.Component {
   renderStepComponent (component) {
     return React.cloneElement(component, {
       ref   : 'step',
-      model : this.props.model
+      model : this.getState().get('model')
     });
   }
 
   renderSidebar (state) {
+    if (!this.isActive()) return;
+
     return (
       <div className='halcyon-wizard__sidebar'>
         <HalcyonStepSelector steps={this.getSteps()}
@@ -250,7 +275,17 @@ export default class HalcyonWizard extends React.Component {
     );
   }
 
+  renderBreadcrumbs () {
+    if (!this.isActive()) return;
+
+    return (
+      <HalcyonBreadcrumbs />
+    );
+  }
+
   renderDirectionalNavigation (state) {
+    if (!this.isActive()) return;
+
     return (
       <HalcyonDirectionalNavigation currentStepIndex={this.getCurrentStepIndex()}
                                     onChange={::this.attemptToNavigateToIndex}
@@ -260,6 +295,8 @@ export default class HalcyonWizard extends React.Component {
   }
 
   renderFooter (state) {
+    if (!this.isActive()) return;
+
     return (
       <div className='halcyon-wizard__footer clearfix'>
         {this.renderDirectionalNavigation()}
@@ -275,27 +312,17 @@ export default class HalcyonWizard extends React.Component {
     );
   }
 
-  renderInactiveState (state) {
-    const currentStep = this.getSteps()[this.getCurrentStepIndex()];
-
-    return (
-      <div className='halcyon-wizard'>
-        <div className='halcyon-wizard__viewport'>
-          {this.renderStepComponent(currentStep)}
-        </div>
-      </div>
-    );
-  }
-
-  renderActiveState (state) {
+  renderWizardState (state) {
     const currentStep = this.getSteps()[this.getCurrentStepIndex()];
 
     return (
       <div className='halcyon-wizard'>
         {this.renderSidebar(state)}
         <div className='halcyon-wizard__viewport'>
-          <HalcyonBreadcrumbs />
-          {this.renderStepComponent(currentStep)}
+          {this.renderBreadcrumbs(state)}
+          <div className='halcyon-wizard__viewport__step'>
+            {this.renderStepComponent(currentStep)}
+          </div>
           {this.renderFooter(state)}
         </div>
       </div>
@@ -307,12 +334,7 @@ export default class HalcyonWizard extends React.Component {
 
     return (
       <div className='halcyon-container'>
-        {state && (
-          this.isActive() ?
-            this.renderActiveState(state) :
-            this.renderInactiveState(state)
-          )
-        }
+        {state && this.renderWizardState(state)}
       </div>
     );
   }
