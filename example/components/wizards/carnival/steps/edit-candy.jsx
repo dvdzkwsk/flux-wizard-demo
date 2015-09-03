@@ -1,6 +1,5 @@
 import React from 'react';
 import { step as WizardStep } from 'halcyon';
-import CottonCandyWizard from '../../cotton-candy';
 
 @WizardStep
 export default class EditCandy extends React.Component {

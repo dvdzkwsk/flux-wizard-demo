@@ -2,7 +2,7 @@ import React from 'react';
 import { step as WizardStep } from 'halcyon';
 
 @WizardStep
-export default class EditInfo extends React.Component {
+export default class EditAttendees extends React.Component {
   constructor () {
     super();
   }
@@ -10,7 +10,7 @@ export default class EditInfo extends React.Component {
   render () {
     return (
       <div>
-        <h2>Edit Info!</h2>
+        <h3>Here's who's coming!</h3>
       </div>
     );
   }

@@ -1,7 +1,12 @@
 import React from 'react';
+import { getComponentTitle } from '../lib/component';
 
 export default function halcyonStepDecorator (Component) {
   return class HalcyonStep extends React.Component {
+    static defaultProps = {
+      title : getComponentTitle(Component)
+    }
+
     constructor () {
       super();
       this.state = {
@@ -17,8 +22,8 @@ export default function halcyonStepDecorator (Component) {
 
     componentDidUpdate (nextProps, nextState) {
       if (
-        !this.state.dirty &&
-        this.props.model !== nextProps.model
+        !nextState.dirty &&
+        nextState.model !== nextProps.model
       ) {
         this.setState({
           dirty : true
@@ -42,8 +47,7 @@ export default function halcyonStepDecorator (Component) {
 
     setProperty (path, value) {
       this.setState({
-        model : this.state.model
-          .setIn(path, value)
+        model : this.state.model.setIn(path, value)
       });
     }
 
@@ -53,12 +57,31 @@ export default function halcyonStepDecorator (Component) {
       return (e) => this.setProperty(pathArr, e.target.value);
     }
 
+    renderResetModelButton () {
+      // if (this.state.dirty) {
+      //   return (
+      //     <button className='btn btn-block btn-default'
+      //             onClick={() => this.setState({
+      //               dirty : false,
+      //               model : this.props.model
+      //             })}>
+      //       Undo Changes
+      //     </button>
+      //   );
+      // }
+    }
+
     render () {
+      console.info('Step dirty state: ', this.state.dirty);
+
       return (
-        <Component ref='step'
-                   model={this.state.model.toJS()}
-                   setProperty={::this.setProperty}
-                   bindTo={::this.bindTo} />
+        <div>
+          <Component ref='step'
+                     model={this.state.model.toJS()}
+                     setProperty={::this.setProperty}
+                     bindTo={::this.bindTo} />
+          {this.renderResetModelButton()}
+        </div>
       );
     }
   }
