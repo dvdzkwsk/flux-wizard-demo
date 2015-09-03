@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect }            from 'react-redux';
 import * as WizardActions     from '../actions/wizard';
 import { alwaysArray }        from '../lib/array';
+import { activeWizardOnly }   from '../lib/decorators';
 import HalcyonViewportFooter  from './HalcyonViewportFooter';
 import HalcyonStepSelector    from './HalcyonStepSelector';
 import HalcyonNavigation      from './HalcyonDirectionalNavigation';
@@ -196,9 +197,15 @@ export default class HalcyonWizard extends React.Component {
   *
   */
   isActive () {
-    const selfDepth = this._state.get('depth');
+    // console.log(this);
 
-    return (selfDepth + 1) === this.props.halcyon.size;
+    if (this._state) {
+      const selfDepth = this._state.get('depth');
+
+      return (selfDepth + 1) === this.props.halcyon.size;
+    } else {
+      return false;
+    }
   }
 
   // ----------------------------------
@@ -239,23 +246,24 @@ export default class HalcyonWizard extends React.Component {
     });
   }
 
+  @activeWizardOnly
   renderBreadcrumbs () {
-    if (!this.isActive()) return;
-
     return <HalcyonBreadcrumbs />;
   }
 
+  @activeWizardOnly
   renderStepSelector () {
-    if (!this.isActive()) return;
-
     return (
       <HalcyonStepSelector steps={this.getSteps()}
                            onSelect={::this.attemptToNavigateToIndex} />
     );
   }
 
+  @activeWizardOnly
   renderDirectionalNavigation () {
-
+    // return (
+    //
+    // );
   }
 
   /**
