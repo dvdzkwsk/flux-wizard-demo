@@ -1,10 +1,10 @@
 import React from 'react';
 import { getComponentTitle } from '../lib/component';
 
-export default function halcyonStepDecorator (Component) {
+function createStepComponent (name, Component) {
   return class HalcyonStep extends React.Component {
     static defaultProps = {
-      title : getComponentTitle(Component)
+      title : name
     }
 
     constructor () {
@@ -45,6 +45,10 @@ export default function halcyonStepDecorator (Component) {
       return true;
     }
 
+    setModel (model) {
+      this.setState({ model });
+    }
+
     setProperty (path, value) {
       const pathArr = Array.isArray(path) ? path : path.split('.');
 
@@ -78,11 +82,18 @@ export default function halcyonStepDecorator (Component) {
         <div>
           <Component ref='step'
                      model={this.state.model.toJS()}
+                     setModel={::this.setModel}
                      setProperty={::this.setProperty}
                      bindTo={::this.bindTo} />
           {this.renderResetModelButton()}
         </div>
       );
     }
-  }
+  };
+}
+
+export default function halcyonStepDecorator (name) {
+  return function (Component) {
+    return createStepComponent(name, Component);
+  };
 }

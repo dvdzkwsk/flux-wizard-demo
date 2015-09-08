@@ -1,6 +1,5 @@
 import React                 from 'react';
 import { connect }           from 'react-redux';
-import { alwaysArray }       from '../lib/array';
 import { getComponentTitle } from '../lib/component';
 import * as HalcyonActions   from '../actions/wizard';
 

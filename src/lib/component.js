@@ -1,4 +1,5 @@
 export function getComponentTitle (component) {
+  console.log(component);
   try {
     if (component.props && component.props.title) {
       return component.props.title;

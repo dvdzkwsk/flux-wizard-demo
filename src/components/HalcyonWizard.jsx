@@ -12,8 +12,8 @@ import HalcyonBreadcrumbs     from './HalcyonBreadcrumbs';
 * wizard instance. This helps to standardize and eliminate redundant
 * "isActive()" checks at the top of render helper methods.
 *
-* @returns {function} lifted function that will only be called if its instance
-* is the active wizard instance.
+* @returns {function} lifts the target function so that it will only be called
+* if its caller is the active wizard instance.
 */
 function activeWizardOnly (target, key, descriptor) {
   const fn = descriptor.value;
@@ -30,9 +30,10 @@ function activeWizardOnly (target, key, descriptor) {
 }))
 export default class HalcyonWizard extends React.Component {
   static propTypes = {
-    model    : React.PropTypes.object.isRequired,
-    onCancel : React.PropTypes.func.isRequired,
-    onSubmit : React.PropTypes.func.isRequired
+    model         : React.PropTypes.object.isRequired,
+    onCancel      : React.PropTypes.func.isRequired,
+    onSubmit      : React.PropTypes.func.isRequired,
+    onModelChange : React.PropTypes.func
   }
 
   constructor () {
@@ -318,7 +319,7 @@ export default class HalcyonWizard extends React.Component {
   * instance). This should be investigated more thoroughly in the future.
   */
   renderWizardReadyState (state) {
-    const viewportClasses = ['halcyon-wizard__viewport']
+    const viewportClasses = ['halcyon-wizard__viewport'];
 
     if (this.isActive()) {
       viewportClasses.push('halcyon-wizard__viewport--active');

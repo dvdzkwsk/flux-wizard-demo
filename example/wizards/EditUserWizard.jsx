@@ -1,5 +1,7 @@
-import React from 'react';
-import { HalcyonWizard } from 'halcyon';
+import React               from 'react';
+import { HalcyonWizard }   from 'halcyon';
+import EditUserInfoStep    from './EditUserInfoStep';
+import EditUserFriendsStep from './EditUserFriendsStep';
 
 export default class EditUserWizard extends React.Component {
   static defaultProps = {
@@ -13,7 +15,8 @@ export default class EditUserWizard extends React.Component {
   render () {
     return (
       <HalcyonWizard {...this.props}>
-        
+        <EditUserInfoStep />
+        <EditUserFriendsStep />
       </HalcyonWizard>
     );
   }
