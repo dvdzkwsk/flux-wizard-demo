@@ -84,6 +84,13 @@ describe('(Reducer) Halcyon', function () {
         expect(_item.get('depth')).to.be.defined;
       });
 
+      it('Should define the property depth as item\'s index in the list of wizards.', function () {
+        expect(_item.get('depth')).to.equal(0);
+
+        expect(reducer.run(createWizard()).get(1).get('depth')).to.equal(1);
+        expect(reducer.run(createWizard()).get(2).get('depth')).to.equal(2);
+      });
+
       it('Should define a property model.', function () {
         expect(_item.get('model')).to.be.defined;
       });
@@ -138,10 +145,78 @@ describe('(Reducer) Halcyon', function () {
       expect(after).to.equal(before);
     });
 
+    it('Should delete the state list entry whose property "instance" matches the target instance.', function () {
+      const before   = reducer.getState();
+      const deletedA = reducer.run(destroyWizard(_a));
+
+      // Delete _a
+      expect(deletedA.size).to.equal(2);
+      expect(deletedA.find(w => w.get('instance') === _a)).to.be.undefined;
+      expect(deletedA.find(w => w.get('instance') === _b)).to.be.defined;
+      expect(deletedA.find(w => w.get('instance') === _c)).to.be.defined;
+
+      // Delete _b
+      const deletedB = reducer.run(destroyWizard(_b));
+      expect(deletedB.size).to.equal(1);
+      expect(deletedB.find(w => w.get('instance') === _a)).to.be.undefined;
+      expect(deletedB.find(w => w.get('instance') === _b)).to.be.undefined;
+      expect(deletedB.find(w => w.get('instance') === _c)).to.be.defined;
+
+      // Attempt to delete _b again
+      const deleteBAgain = reducer.run(destroyWizard(_b));
+      expect(deleteBAgain.size).to.equal(1);
+      expect(deleteBAgain.find(w => w.get('instance') === _a)).to.be.undefined;
+      expect(deleteBAgain.find(w => w.get('instance') === _b)).to.be.undefined;
+      expect(deleteBAgain.find(w => w.get('instance') === _c)).to.be.defined;
+    });
+
   });
 
   describe('HALCYON_WIZARD_SET_MODEL', function () {
+    var _a, _b, _c; // mock instances
 
+    beforeEach(function () {
+      reducer.run(createWizard(_a = {}));
+      reducer.run(createWizard(_b = {}));
+      reducer.run(createWizard(_c = {}));
+    });
+
+    it('Should set the supplied model on the entry that matches the target instance.', function () {
+      const beforeModel = reducer.getState().first().get('model');
+      const newModel    = {};
+      const afterModel  = reducer.run(setWizardModel(_a, newModel)).first().get('model');
+
+      expect(afterModel).to.not.equal(beforeModel);
+      expect(afterModel).to.equal(newModel);
+    });
+
+    it('Should return a new state reference.', function () {
+      const before = reducer.getState();
+      const after  = reducer.run(setWizardModel(_a, {}));
+
+      expect(before).to.not.equal(after);
+    });
+
+    it('Should not affect the models of the other entries.', function () {
+
+      // models from the old state
+      const aModel   = reducer.getState().get(0).get('model');
+      const bModel   = reducer.getState().get(1).get('model');
+      const cModel   = reducer.getState().get(2).get('model');
+      const newModel = {};
+
+      // models from the new state
+      const after       = reducer.run(setWizardModel(_a, newModel));
+      const afterAModel = after.get(0).get('model');
+      const afterBModel = after.get(1).get('model');
+      const afterCModel = after.get(2).get('model');
+
+      expect(afterAModel).to.equal(newModel);
+      expect(afterAModel).to.not.equal(aModel);
+
+      expect(afterBModel).to.equal(bModel);
+      expect(afterCModel).to.equal(cModel);
+    });
   });
 
   describe('HALCYON_WIZARD_STEP_CHANGE', function () {
