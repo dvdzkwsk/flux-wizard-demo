@@ -1,5 +1,5 @@
 export default {
   HalcyonWizard : require('./components/HalcyonWizard'),
-  HalcyonStep   : require('./decorators/step'),
+  HalcyonStep   : require('./decorators/HalcyonStep'),
   reducers      : require('./reducers')
 };
