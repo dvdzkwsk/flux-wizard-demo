@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import reducers from './reducers';
-import CarnivalWizard from './components/wizards/carnival';
 
 const store = createStore(combineReducers(reducers));
 
@@ -37,9 +36,7 @@ export default class Root extends React.Component {
   render () {
     return (
       <Provider store={store}>
-        <CarnivalWizard model={_sampleModel}
-                        onSubmit={::this._onSubmit}
-                        onCancel={::this._onCancel} />
+        <h1>Hello</h1>
       </Provider>
     );
   }

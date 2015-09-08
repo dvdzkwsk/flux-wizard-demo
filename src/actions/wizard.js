@@ -3,7 +3,7 @@ import {
   HALCYON_WIZARD_DESTROY,
   HALCYON_WIZARD_SET_MODEL,
   HALCYON_WIZARD_STEP_CHANGE,
-  HALCYON_WIZARD_OPEN_INDEX
+  HALCYON_WIZARD_OPEN
 } from '../constants/wizard';
 
 export function createWizard (instance, model) {
@@ -42,11 +42,11 @@ export function changeWizardStep (instance, index) {
   };
 }
 
-export function openWizardIndex (index) {
+export function openWizard (instance) {
   return {
-    type : HALCYON_WIZARD_OPEN_INDEX,
+    type : HALCYON_WIZARD_OPEN,
     payload : {
-      index
+      instance
     }
   };
 }

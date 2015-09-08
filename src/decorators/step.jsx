@@ -74,8 +74,6 @@ export default function halcyonStepDecorator (Component) {
     }
 
     render () {
-      console.info('Step dirty state: ', this.state.dirty);
-
       return (
         <div>
           <Component ref='step'

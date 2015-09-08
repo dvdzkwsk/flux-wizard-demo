@@ -4,12 +4,28 @@ import { bindActionCreators } from 'redux';
 import { connect }            from 'react-redux';
 import * as WizardActions     from '../actions/wizard';
 import { alwaysArray }        from '../lib/array';
-import { activeWizardOnly }   from '../lib/decorators';
 import HalcyonViewportFooter  from './HalcyonViewportFooter';
 import HalcyonStepSelector    from './HalcyonStepSelector';
-import HalcyonNavigation      from './HalcyonDirectionalNavigation';
 import HalcyonBreadcrumbs     from './HalcyonBreadcrumbs';
-import '../styles/HalcyonWizard.scss';
+// import '../styles/HalcyonWizard.scss';
+
+/**
+* Decorates an instance method to only be called when its caller is the active
+* wizard instance. This helps to standardize and eliminate redundant
+* "isActive()" checks at the top of render helper methods.
+*
+* @returns {function} lifted function that will only be called if its instance
+* is the active wizard instance.
+*/
+function activeWizardOnly (target, key, descriptor) {
+  const fn = descriptor.value;
+
+  descriptor.value = function () {
+    return this.isActive() ? fn.call(this) : null;
+  };
+
+  return descriptor;
+}
 
 @connect(state => ({
   halcyon : state.halcyon
@@ -43,7 +59,7 @@ export default class HalcyonWizard extends React.Component {
   * this.foo(...);
   * @param {object} actions - object that defines a map of functions where
   * the key is the function name and the value is its definition.
-  * @returns {object} instance - returns `this` for chainability.
+  * @returns {object} returns `this` for chainability.
   */
   bindActionCreatorsToSelf (actions) {
     const boundActions = bindActionCreators(actions, this.props.dispatch);
@@ -53,10 +69,10 @@ export default class HalcyonWizard extends React.Component {
       if (!this[key]) {
         this._actions[key] = boundActions[key].bind(null, this);
       } else {
-        console.warn([
-          `Cannot apply action ${key} to HalcyonWizard instance because the`,
+        console.warn(
+          `Cannot apply action ${key} to HalcyonWizard instance because the ` +
           `property already exists.`
-        ].join(' '));
+        );
       }
     }
     return this;
@@ -124,7 +140,7 @@ export default class HalcyonWizard extends React.Component {
   /**
   * Routes all internal navigation attempts. Helps hook into lifecycle methods
   * to determine if the wizard should proceed with the navigation.
-  * @param {integer} Index of the target step.
+  * @param {integer} index Index of the target step.
   */
   attemptToNavigateToIndex (idx) {
     if (this.shouldWizardNavigate()) {
@@ -134,7 +150,7 @@ export default class HalcyonWizard extends React.Component {
 
   /**
   * Updates the active step of the wizard to the target index.
-  * @param {integer} Index of the target step.
+  * @param {integer} index Index of the target step.
   */
   navigateToIndex (idx) {
     this._actions.setWizardModel(this.refs.step.state.model);
@@ -145,7 +161,7 @@ export default class HalcyonWizard extends React.Component {
   * Handler that receives change events from navigation components. Helps
   * to separate concerns between a requested navigation change and any
   * actual action taken within the wizard.
-  * @param {integer} Index of the target step.
+  * @param {integer} index Index of the target step.
   */
   onNavigationChange (idx) {
     this.attemptToNavigateToIndex(idx);
@@ -169,7 +185,7 @@ export default class HalcyonWizard extends React.Component {
   * @returns {number} The index of the active step.
   */
   getCurrentStep () {
-    return this.getSteps()[this._state.get('stepIndex')];
+    return this.getSteps()[this.getCurrentStepIndex()];
   }
 
   /**
@@ -194,11 +210,9 @@ export default class HalcyonWizard extends React.Component {
   }
 
   /**
-  *
+  * @returns {boolean} Tru iff the wizard component is the active wizard.
   */
   isActive () {
-    // console.log(this);
-
     if (this._state) {
       const selfDepth = this._state.get('depth');
 
@@ -252,18 +266,28 @@ export default class HalcyonWizard extends React.Component {
   }
 
   @activeWizardOnly
-  renderStepSelector () {
+  renderSidebar () {
     return (
-      <HalcyonStepSelector steps={this.getSteps()}
-                           onSelect={::this.attemptToNavigateToIndex} />
+      <div className='halcyon-wizard__sidebar'>
+        <HalcyonStepSelector steps={this.getSteps()}
+                             onSelect={::this.attemptToNavigateToIndex} />
+      </div>
     );
   }
 
   @activeWizardOnly
-  renderDirectionalNavigation () {
-    // return (
-    //
-    // );
+  renderViewportFooter () {
+    const navigate = this.attemptToNavigateToIndex;
+    const currIdx  = this._state.get('stepIndex');
+
+    return (
+      <div>
+        <HalcyonViewportFooter onNext={navigate.bind(this, currIdx + 1)}
+                               onPrevious={navigate.bind(this, currIdx - 1)}
+                               disableNext={this.isOnLastStep()}
+                               disablePrevious={this.isOnFirstStep()} />
+      </div>
+    );
   }
 
   /**
@@ -281,13 +305,13 @@ export default class HalcyonWizard extends React.Component {
   renderWizardReadyState (state) {
     return (
       <div className='halcyon-wizard'>
-        {this.renderStepSelector()}
+        {this.renderSidebar()}
         <div className='halcyon-wizard__viewport'>
           {this.renderBreadcrumbs()}
           <div className='halcyon-wizard__viewport__step'>
             {this.renderStepComponent(this.getCurrentStep())}
           </div>
-          {this.renderDirectionalNavigation()}
+          {this.renderViewportFooter()}
         </div>
       </div>
     );

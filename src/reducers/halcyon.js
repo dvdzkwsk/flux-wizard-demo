@@ -10,10 +10,10 @@ const initialState = Immutable.List();
 
 const actions = {
   /**
-  * @param {state} current reducer state.
-  * @param {object} action object.
-  * @param {object.instance} target component instance.
-  * @param {object.model} initial model for the wizard.
+  * @param {Immutable.List} state - current reducer state.
+  * @param {object} action - action descriptor.
+  * @param {object} action.instance - target component instance.
+  * @param {object} action.model - initial model for the wizard.
   *
   * @returns {object} updated reducer state with the new wizard appended
   * to the current list.
@@ -30,9 +30,9 @@ const actions = {
   },
 
   /**
-  * @param {state} current reducer state.
-  * @param {object} action object.
-  * @param {object.instance} target component instance
+  * @param {Immutable.List} state - current reducer state.
+  * @param {object} action - action descriptor.
+  * @param {object} action.instance - target component instance.
   *
   * @returns {object} updated reducer state without the target wizard.
   */
@@ -41,10 +41,10 @@ const actions = {
   },
 
   /**
-  * @param {state} current reducer state.
-  * @param {object} action object.
-  * @param {object.instance} target component instance.
-  * @param {object.index} new step index for target wizard.
+  * @param {Immutable.List} state - current reducer state.
+  * @param {object} action - action descriptor.
+  * @param {object} action.instance - target component instance.
+  * @param {model} action.model - updated model for the target wizard instance.
   *
   * @returns {object} updated reducer state where the target wizard's active
   * step has been updated to the target index.
@@ -57,10 +57,10 @@ const actions = {
   },
 
   /**
-  * @param {state} current reducer state
-  * @param {object} action
-  * @param {object.instance} target component instance
-  * @param {object.index} new step index for target wizard
+  * @param {Immutable.List} state - current reducer state.
+  * @param {object} action - action descriptor.
+  * @param {object} action.instance - target component instance.
+  * @param {number} action.index - new step index for target wizard.
   *
   * @returns {object} updated reducer state where the target wizard's active
   * step has been updated to the target index.
@@ -73,7 +73,8 @@ const actions = {
   }
 };
 
-export default function halcyonWizardsReducer (state = initialState, action) {
+// halcyonReducer :: Immutable.List -> Object -> Immutable.List
+export default function halcyonReducer (state = initialState, action) {
   const handler = actions[action.type];
 
   return handler ? handler(state, action.payload) : state;

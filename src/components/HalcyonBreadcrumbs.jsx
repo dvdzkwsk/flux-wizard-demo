@@ -5,7 +5,7 @@ import { getComponentTitle } from '../lib/component';
 import * as HalcyonActions   from '../actions/wizard';
 
 @connect(state => ({
-  halcyon : state.halcyon
+  wizards : state.halcyon
 }))
 export default class HalcyonBreadcrumbs extends React.Component {
   constructor () {
@@ -13,31 +13,30 @@ export default class HalcyonBreadcrumbs extends React.Component {
   }
 
   onClick (link) {
-    // const { index } = link;
-
     console.log('clicked', link);
-    // this.props.dispatch(HalcyonActions.openWizardIndex(index));
   }
 
+  // Wizards a, Details b => [a] -> [b, b]
   getBreadcrumbsForWizards (wizards) {
     return wizards
       .flatMap(wizard => {
         const instance   = wizard.get('instance'),
-              steps      = alwaysArray(instance.props.children),
-              activeStep = steps[wizard.get('stepIndex')];
+              activeStep = instance.getCurrentStep();
 
         return [instance, activeStep]
-          .map(getComponentTitle)
-          .map(title => ({ title, instance }))
-      });
+          .map(component => ({
+            title    : getComponentTitle(component),
+            instance : instance
+          }));
+      }).toJS();
   }
 
   render () {
-    const breadcrumbs = this.getBreadcrumbsForWizards(this.props.halcyon);
+    const breadcrumbs = this.getBreadcrumbsForWizards(this.props.wizards);
 
     return (
       <ol className='breadcrumb'>
-        {breadcrumbs.toJS().map((link, idx) => (
+        {breadcrumbs.map((link, idx) => (
           <li key={idx}>
             <a href='#' onClick={this.onClick.bind(this, link)}>
               {link.title}
