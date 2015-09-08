@@ -327,12 +327,12 @@ export default class HalcyonWizard extends React.Component {
     const currIdx  = this._state.get('stepIndex');
 
     return (
-      <div>
-        <HalcyonViewportFooter onNext={navigate.bind(this, currIdx + 1)}
-                               onPrevious={navigate.bind(this, currIdx - 1)}
-                               disableNext={!this.canNavigateForward()}
-                               disablePrevious={!this.canNavigateBackward()} />
-      </div>
+      <HalcyonViewportFooter onCancel={::this._onCancel}
+                             onSubmit={::this._onSubmit}
+                             onNext={navigate.bind(this, currIdx + 1)}
+                             onPrevious={navigate.bind(this, currIdx - 1)}
+                             disableNext={!this.canNavigateForward()}
+                             disablePrevious={!this.canNavigateBackward()} />
     );
   }
 
