@@ -3,10 +3,6 @@ import { HalcyonStep } from 'halcyon';
 
 @HalcyonStep('Edit User Info')
 export default class EditUserInfoStep extends React.Component {
-  static defaultProps = {
-    title : 'Edit User Information'
-  }
-
   constructor () {
     super();
   }

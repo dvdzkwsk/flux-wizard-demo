@@ -205,17 +205,47 @@ export default class HalcyonWizard extends React.Component {
   }
 
   /**
-  * @returns {boolean} True iff the wizard is on the first step.
+  * @returns {boolean} whether or not the wizard can navigate backwards.
   */
-  isOnFirstStep () {
-    return this.getCurrentStepIndex() === 0;
+  canNavigateBackward () {
+    const stepIdx = this.getCurrentStepIndex();
+
+    // If wizard is on the first step, prohibit backward navigation.
+    if (stepIdx === 0) return false;
+
+    // If all steps behind the current step are disabled, disable backward
+    // navigation.
+    const activePreviousSteps = this.getSteps()
+      .filter((step, idx) => (
+        idx < stepIdx && !step.props.disabled
+      ));
+
+    if (activePreviousSteps.length === 0) return false;
+
+    // All checks pass, wizard can navigate backward.
+    return true;
   }
 
   /**
   * @returns {boolean} True iff the wizard is on the last step.
   */
-  isOnLastStep () {
-    return this.getCurrentStepIndex() === this.getSteps().length - 1;
+  canNavigateForward () {
+    const stepIdx = this.getCurrentStepIndex();
+
+    // If wizard is on the last step, prohibit forward navigation.
+    if (stepIdx === this.getSteps().length) return false;
+
+    // If all steps ahead of the current step are disabled, disable forward
+    // navigation.
+    const activeFutureSteps = this.getSteps()
+      .filter((step, idx) => (
+        idx > stepIdx && !step.props.disabled
+      ));
+
+    if (activeFutureSteps.length === 0) return false;
+
+    // All checks pass, wizard can navigate forward.
+    return true;
   }
 
   /**
@@ -300,8 +330,8 @@ export default class HalcyonWizard extends React.Component {
       <div>
         <HalcyonViewportFooter onNext={navigate.bind(this, currIdx + 1)}
                                onPrevious={navigate.bind(this, currIdx - 1)}
-                               disableNext={this.isOnLastStep()}
-                               disablePrevious={this.isOnFirstStep()} />
+                               disableNext={!this.canNavigateForward()}
+                               disablePrevious={!this.canNavigateBackward()} />
       </div>
     );
   }
