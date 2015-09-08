@@ -37,7 +37,9 @@ const actions = {
   * @returns {object} updated reducer state without the target wizard.
   */
   [HALCYON_WIZARD_DESTROY] : (state, { instance }) => {
-    return state.filter(wizard => wizard.get('instance') !== instance);
+    const idx = state.findIndex(w => w.get('instance') === instance);
+
+    return idx >= 0 ? state.delete(idx) : state;
   },
 
   /**
