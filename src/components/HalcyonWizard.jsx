@@ -3,11 +3,9 @@ import Immutable              from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect }            from 'react-redux';
 import * as WizardActions     from '../actions/wizard';
-import { alwaysArray }        from '../lib/array';
 import HalcyonViewportFooter  from './HalcyonViewportFooter';
 import HalcyonStepSelector    from './HalcyonStepSelector';
 import HalcyonBreadcrumbs     from './HalcyonBreadcrumbs';
-// import '../styles/HalcyonWizard.scss';
 
 /**
 * Decorates an instance method to only be called when its caller is the active
@@ -89,6 +87,10 @@ export default class HalcyonWizard extends React.Component {
   componentWillMount () {
     this.bindActionCreatorsToSelf(WizardActions);
     this._actions.createWizard(Immutable.fromJS(this.props.model));
+
+    if (!this.getSteps().length) {
+      console.warn('Halcyon Wizard must have at least one child component.');
+    }
   }
 
   componentWillUpdate (nextProps, nextState) {
@@ -178,7 +180,13 @@ export default class HalcyonWizard extends React.Component {
   * @returns {array} Collection of direct child steps.
   */
   getSteps () {
-    return alwaysArray(this.props.children);
+    const steps = this.props.children;
+
+    if (steps) {
+      return Array.isArray(steps) ? steps : [steps];
+    } else {
+      return [];
+    }
   }
 
   /**
@@ -254,6 +262,13 @@ export default class HalcyonWizard extends React.Component {
   // Rendering Logic
   // ----------------------------------
   renderStepComponent (component) {
+    if (!component) {
+      console.warn(
+        `No component defined for step at index ${this.getCurrentStepIndex()}`
+      );
+      return;
+    }
+
     return React.cloneElement(component, {
       ref   : 'step',
       model : this._state.get('model')
