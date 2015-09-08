@@ -318,10 +318,16 @@ export default class HalcyonWizard extends React.Component {
   * instance). This should be investigated more thoroughly in the future.
   */
   renderWizardReadyState (state) {
+    const viewportClasses = ['halcyon-wizard__viewport']
+
+    if (this.isActive()) {
+      viewportClasses.push('halcyon-wizard__viewport--active');
+    }
+
     return (
       <div className='halcyon-wizard'>
         {this.renderSidebar()}
-        <div className='halcyon-wizard__viewport'>
+        <div className={viewportClasses.join(' ')}>
           {this.renderBreadcrumbs()}
           <div className='halcyon-wizard__viewport__step'>
             {this.renderStepComponent(this.getCurrentStep())}

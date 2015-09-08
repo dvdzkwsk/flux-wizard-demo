@@ -16,7 +16,6 @@ export default class HalcyonBreadcrumbs extends React.Component {
     console.log('clicked', link);
   }
 
-  // Wizards a, Details b => [a] -> [b, b]
   getBreadcrumbsForWizards (wizards) {
     return wizards
       .flatMap(wizard => {
