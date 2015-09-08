@@ -1,17 +1,62 @@
-import React           from 'react';
-import { HalcyonStep } from 'halcyon';
+import React from 'react';
+import EditUserInfoStep from './EditUserInfoStep';
+import { HalcyonWizard, HalcyonStep } from 'halcyon';
 
 @HalcyonStep('Edit User Friends')
 export default class EditUserFriendsStep extends React.Component {
   constructor () {
     super();
+    this.state = {
+      wizardModel  : null,
+      wizardSubmit : null
+    };
+  }
+
+  _addFriend () {
+    this.setState({
+      wizardModel  : {},
+      wizardSubmit : (model) => {
+        this.props.setProperty('friends', [...this.props.model.friends, model]);
+      }
+    });
+  }
+
+  renderFriendWizard () {
+    return (
+      <HalcyonWizard title='Friend Wizard'
+                     model={this.state.wizardModel}
+                     onCancel={() => {
+                       this.setState({ wizardModel : null, wizardSubmit : null })
+                     }}
+                     onSubmit={(model) => {
+                       this.state.wizardSubmit(model);
+                       this.setState({ wizardModel : null, wizardSubmit : null });
+                     }}>
+        <EditUserInfoStep title='Edit Friend Info' />
+      </HalcyonWizard>
+    );
   }
 
   render () {
     const { model } = this.props;
 
+    if (this.state.wizardModel) {
+      return this.renderFriendWizard();
+    }
+
     return (
       <div>
+        <h2>Friends of {model.firstName} {model.lastName}</h2>
+        <div className='list-group'>
+          {model.friends.map((friend, idx) => (
+            <button type='button' className='list-group-item' key={idx}>
+              {friend.firstName} {friend.lastName}
+            </button>
+          ))}
+        </div>
+        <button className='btn btn-success' onClick={::this._addFriend}>
+          Add a Friend
+        </button>
       </div>
     );
   }

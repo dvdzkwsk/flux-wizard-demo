@@ -8,15 +8,13 @@ import EditUserWizard from './wizards/EditUserWizard';
 const store = createStore(combineReducers(reducers));
 
 const _sampleModel = {
-  candies : [
-    { name : 'Snickers', price : '1' },
-    { name : 'Reese\'s', price : '1.5' },
-    { name : 'Lollipop', price : '0.75' }
-  ],
-  attendees : [
-    { name : 'Michael Scott' },
-    { name : 'Dwight Schrute' },
-    { name : 'Jim Halpert' }
+  firstName : 'Michael',
+  lastName  : 'Scott',
+  age       : 42,
+  friends   : [
+    { firstName : 'Dwight', lastName : 'Schrute' },
+    { firstName : 'Jim', lastName : 'Halpert' },
+    { firstName : 'Oscar', lastName : 'Martinez' }
   ]
 };
 

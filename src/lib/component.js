@@ -1,5 +1,4 @@
 export function getComponentTitle (component) {
-  console.log(component);
   try {
     if (component.props && component.props.title) {
       return component.props.title;
@@ -9,6 +8,6 @@ export function getComponentTitle (component) {
       return component.name.replace(/([a-z](?=[A-Z]))/g, '$1 ');
     }
   } catch (e) {}
-
+  
   return 'UNNAMED COMPONENT';
 }
