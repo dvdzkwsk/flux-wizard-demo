@@ -220,6 +220,53 @@ describe('(Reducer) Halcyon', function () {
   });
 
   describe('HALCYON_WIZARD_STEP_CHANGE', function () {
+    var _a, _b, _c; // mock instances
 
+    beforeEach(function () {
+      reducer.run(createWizard(_a = {}));
+      reducer.run(createWizard(_b = {}));
+      reducer.run(createWizard(_c = {}));
+    });
+
+    it('Should update the "stepIndex" property on the target instance to match "index" in the action payload.', function () {
+      expect(reducer.run(changeWizardStep(_a, 1)).first().get('stepIndex')).to.equal(1);
+      expect(reducer.run(changeWizardStep(_a, 2)).first().get('stepIndex')).to.equal(2);
+      expect(reducer.run(changeWizardStep(_a, 0)).first().get('stepIndex')).to.equal(0);
+    });
+
+    it('Should return a new state reference if the provided index is different from the current value.', function () {
+      const before = reducer.getState();
+      const after  = reducer.run(changeWizardStep(_a, 1));
+
+      expect(before).to.not.equal(after);
+    });
+
+    it('Should not return a new state reference if the provided index is the same as the current value.', function () {
+      const before = reducer.getState();
+      const after  = reducer.run(changeWizardStep(_a, 0));
+
+      expect(before).to.equal(after);
+    });
+
+    it('Should not affect the "stepIndex" property in the other entries.', function () {
+
+      // indexes from the original state
+      const beforeAIndex = reducer.getState().get(0).get('stepIndex');
+      const beforeBIndex = reducer.getState().get(1).get('stepIndex');
+      const beforeCIndex = reducer.getState().get(2).get('stepIndex');
+      const newAIndex    = 2;
+
+      // stepIndexes from the new state
+      const after       = reducer.run(changeWizardStep(_a, newAIndex));
+      const afterAIndex = after.get(0).get('stepIndex');
+      const afterBIndex = after.get(1).get('stepIndex');
+      const afterCIndex = after.get(2).get('stepIndex');
+
+      expect(afterAIndex).to.equal(newAIndex);
+      expect(afterAIndex).to.not.equal(beforeAIndex);
+
+      expect(afterBIndex).to.equal(beforeBIndex);
+      expect(afterCIndex).to.equal(beforeCIndex);
+    });
   });
 });
