@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "webpack-dev-server --port 3000 --hot --inline --colors --history-api-fallback",
     "dev:quiet": "webpack-dev-server --port 3000 --hot --inline --colors --no-info --history-api-fallback --quiet",
-    "test": "echo \"test is noop\""
+    "test": "node ./node_modules/karma/bin/karma start"
   },
   "repository": {
     "type": "git",
@@ -34,6 +34,16 @@
     "babel-core": "^5.6.15",
     "babel-loader": "^5.1.4",
     "html-webpack-plugin": "^1.5.2",
+    "karma": "^0.13.8",
+    "karma-chai": "^0.1.0",
+    "karma-chai-plugins": "^0.6.0",
+    "karma-mocha": "^0.2.0",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "karma-spec-reporter": "0.0.20",
+    "karma-webpack": "^1.7.0",
+    "phantomjs": "^1.9.17",
+    "phantomjs-polyfill": "0.0.1",
+    "react-addons-test-utils": "^0.14.0-beta3",
     "react-hot-loader": "^1.2.7",
     "webpack": "^1.9.11",
     "webpack-dev-server": "^1.9.0"

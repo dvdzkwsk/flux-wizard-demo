@@ -21,16 +21,21 @@ export default class EditUserFriendsStep extends React.Component {
     });
   }
 
+  _closeSubwizard () {
+    this.setState({
+      wizardModel  : null,
+      wizardSubmit : null
+    });
+  }
+
   renderFriendWizard () {
     return (
       <HalcyonWizard title='Friend Wizard'
                      model={this.state.wizardModel}
-                     onCancel={() => {
-                       this.setState({ wizardModel : null, wizardSubmit : null })
-                     }}
+                     onCancel={::this._closeSubwizard}
                      onSubmit={(model) => {
                        this.state.wizardSubmit(model);
-                       this.setState({ wizardModel : null, wizardSubmit : null });
+                       this._closeSubwizard();
                      }}>
         <EditUserInfoStep title='Edit Friend Info' />
       </HalcyonWizard>
