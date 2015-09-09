@@ -263,16 +263,18 @@ export default class HalcyonWizard extends React.Component {
   // ----------------------------------
   _onCancel () {
     if (!this.isCurrentStepExitable()) {
-      return;
+      return false;
     }
 
     if (typeof this.props.onCancel === 'function') {
       this.props.onCancel();
+      return true;
     } else {
       debug.warn([
         'No cancel event provided to HalcyonWizard instance; wizard will',
         'not destroy itself, it must be unmounted in its parent component.'
       ].join(' '));
+      return false;
     }
   }
 
