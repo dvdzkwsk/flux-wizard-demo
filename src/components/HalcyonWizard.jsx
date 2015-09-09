@@ -6,6 +6,7 @@ import * as WizardActions     from '../actions/wizard';
 import HalcyonViewportFooter  from './HalcyonViewportFooter';
 import HalcyonStepSelector    from './HalcyonStepSelector';
 import HalcyonBreadcrumbs     from './HalcyonBreadcrumbs';
+import * as debug             from '../lib/debug';
 
 /**
 * Decorates an instance method to only be called when its caller is the active
@@ -18,7 +19,7 @@ import HalcyonBreadcrumbs     from './HalcyonBreadcrumbs';
 function activeWizardOnly (target, key, descriptor) {
   const fn = descriptor.value;
 
-  descriptor.value = function () {
+  descriptor.value = function calledIfWizardIsActive () {
     return this.isActive() ? fn.call(this) : null;
   };
 
@@ -30,6 +31,11 @@ function activeWizardOnly (target, key, descriptor) {
 }))
 export default class HalcyonWizard extends React.Component {
   static propTypes = {
+    children      : React.PropTypes.oneOfType([
+      React.PropTypes.element,
+      React.PropTypes.arrayOf(React.PropTypes.element)
+    ]),
+    halcyon       : React.PropTypes.object.isRequired,
     model         : React.PropTypes.object.isRequired,
     onCancel      : React.PropTypes.func.isRequired,
     onSubmit      : React.PropTypes.func.isRequired,
@@ -40,6 +46,7 @@ export default class HalcyonWizard extends React.Component {
     super();
   }
 
+  /* eslint-disable */
   /**
   * Takes a map of action creators and binds them to the Redux dispatcher and
   * then directly to the wizard class instance. This faciliates dispatching
@@ -68,7 +75,7 @@ export default class HalcyonWizard extends React.Component {
       if (!this[key]) {
         this._actions[key] = boundActions[key].bind(null, this);
       } else {
-        console.warn(
+        debug.warn(
           `Cannot apply action ${key} to HalcyonWizard instance because the ` +
           `property already exists.`
         );
@@ -76,6 +83,7 @@ export default class HalcyonWizard extends React.Component {
     }
     return this;
   }
+  /* eslint-enable */
 
   // TODO: check if already immutable
   setModel (model) {
@@ -90,11 +98,11 @@ export default class HalcyonWizard extends React.Component {
     this._actions.createWizard(Immutable.fromJS(this.props.model));
 
     if (!this.getSteps().length) {
-      console.warn('Halcyon Wizard must have at least one child component.');
+      debug.warn('Halcyon Wizard must have at least one child component.');
     }
   }
 
-  componentWillUpdate (nextProps, nextState) {
+  componentWillUpdate (nextProps) {
     this._state = nextProps.halcyon.find(w => w.get('instance') === this);
   }
 
@@ -159,17 +167,6 @@ export default class HalcyonWizard extends React.Component {
     this._actions.setWizardModel(this.refs.step.state.model);
     this._actions.changeWizardStep(idx);
   }
-
-  /**
-  * Handler that receives change events from navigation components. Helps
-  * to separate concerns between a requested navigation change and any
-  * actual action taken within the wizard.
-  * @param {integer} index Index of the target step.
-  */
-  onNavigationChange (idx) {
-    this.attemptToNavigateToIndex(idx);
-  }
-
   // ----------------------------------
   // State Convenience Methods
   // ----------------------------------
@@ -272,7 +269,7 @@ export default class HalcyonWizard extends React.Component {
     if (typeof this.props.onCancel === 'function') {
       this.props.onCancel();
     } else {
-      console.warn([
+      debug.warn([
         'No cancel event provided to HalcyonWizard instance; wizard will',
         'not destroy itself, it must be unmounted in its parent component.'
       ].join(' '));
@@ -294,10 +291,10 @@ export default class HalcyonWizard extends React.Component {
   // ----------------------------------
   renderStepComponent (component) {
     if (!component) {
-      console.warn(
+      debug.warn(
         `No component defined for step at index ${this.getCurrentStepIndex()}`
       );
-      return;
+      return null;
     }
 
     return React.cloneElement(component, {
@@ -348,7 +345,7 @@ export default class HalcyonWizard extends React.Component {
   * consequently lose their state (since state is tied to the component
   * instance). This should be investigated more thoroughly in the future.
   */
-  renderWizardReadyState (state) {
+  renderWizardReadyState () {
     const wizardClasses = ['halcyon-wizard'];
 
     if (this.isActive()) {
@@ -378,7 +375,7 @@ export default class HalcyonWizard extends React.Component {
   render () {
     return (
       <div className='halcyon-container'>
-        {this._state && this.renderWizardReadyState(this._state)}
+        {this._state && this.renderWizardReadyState()}
       </div>
     );
   }

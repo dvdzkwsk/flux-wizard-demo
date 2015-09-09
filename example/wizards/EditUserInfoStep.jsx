@@ -1,14 +1,18 @@
 import React           from 'react';
-import { HalcyonStep } from 'halcyon';
+import { halcyonStep } from '../../src';
 
-@HalcyonStep('Edit User Info')
+@halcyonStep('Edit User Info')
 export default class EditUserInfoStep extends React.Component {
+  static propTypes = {
+    bindTo : React.PropTypes.func.isRequired,
+    model  : React.PropTypes.object.isRequired
+  }
+
   constructor () {
     super();
   }
 
-  _onAgeChange (e) {
-    console.log(e.target.value);
+  _onAgeChange () {
   }
 
   render () {

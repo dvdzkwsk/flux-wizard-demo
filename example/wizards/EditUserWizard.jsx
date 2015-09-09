@@ -1,5 +1,5 @@
 import React               from 'react';
-import { HalcyonWizard }   from 'halcyon';
+import { HalcyonWizard }   from '../../src';
 import EditUserInfoStep    from './EditUserInfoStep';
 import EditUserFriendsStep from './EditUserFriendsStep';
 

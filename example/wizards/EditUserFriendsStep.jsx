@@ -1,9 +1,14 @@
 import React from 'react';
 import EditUserInfoStep from './EditUserInfoStep';
-import { HalcyonWizard, HalcyonStep } from 'halcyon';
+import { halcyonStep, HalcyonWizard } from '../../src';
 
-@HalcyonStep('Edit User Friends')
+@halcyonStep('Edit User Friends')
 export default class EditUserFriendsStep extends React.Component {
+  static propTypes = {
+    model : React.PropTypes.object.isRequired,
+    setProperty : React.PropTypes.func.isRequired
+  }
+
   constructor () {
     super();
     this.state = {

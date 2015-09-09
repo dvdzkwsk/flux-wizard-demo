@@ -1,5 +1,4 @@
 import React from 'react';
-import { getComponentTitle } from '../lib/component';
 
 function createStepComponent (name, Component) {
   return class HalcyonStep extends React.Component {
@@ -93,7 +92,7 @@ function createStepComponent (name, Component) {
 }
 
 export default function halcyonStepDecorator (name) {
-  return function (Component) {
+  return function createHalcyonStep (Component) {
     return createStepComponent(name, Component);
   };
 }

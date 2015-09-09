@@ -1,18 +1,22 @@
 import React                 from 'react';
 import { connect }           from 'react-redux';
 import { getComponentTitle } from '../lib/component';
-import * as HalcyonActions   from '../actions/wizard';
+// import * as HalcyonActions   from '../actions/wizard';
 
 @connect(state => ({
   wizards : state.halcyon
 }))
 export default class HalcyonBreadcrumbs extends React.Component {
+  static propTypes = {
+    wizards : React.PropTypes.object.isRequired
+  }
+
   constructor () {
     super();
   }
 
-  onClick (link) {
-    console.log('clicked', link);
+  onClick () {
+    // do something
   }
 
   getBreadcrumbsForWizards (wizards) {

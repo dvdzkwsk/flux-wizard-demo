@@ -1,3 +1,3 @@
-export default function userReducer (state = [], action) {
+export default function userReducer (state = []) {
   return state;
 }

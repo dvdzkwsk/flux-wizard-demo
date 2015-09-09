@@ -2,6 +2,7 @@ import React          from 'react';
 import TestUtils      from 'react-addons-test-utils';
 import halcyonReducer from '../halcyon';
 import Immutable      from 'immutable';
+import mockReducer    from './_mock-reducer';
 import {
   createWizard,
   destroyWizard,
@@ -10,16 +11,7 @@ import {
   openWizard
 } from '../../actions/wizard';
 
-const reducer = (function (reducer, _state) {
-  const runWithState = (state, action) => _state = reducer(state, action);
-
-  return {
-    run    : (action) => runWithState(_state, action),
-    runWithState : runWithState,
-    resetState   : runWithState.bind(null, undefined, {}),
-    getState     : () => _state
-  };
-})(halcyonReducer);
+const reducer = mockReducer(halcyonReducer);
 
 describe('(Reducer) Halcyon', function () {
 
@@ -91,7 +83,7 @@ describe('(Reducer) Halcyon', function () {
         expect(reducer.run(createWizard()).get(2).get('depth')).to.equal(2);
       });
 
-      it('Should define a property model.', function () {
+      it('Should define a property "model".', function () {
         expect(_item.get('model')).to.be.defined;
       });
 
@@ -181,6 +173,10 @@ describe('(Reducer) Halcyon', function () {
       reducer.run(createWizard(_c = {}));
     });
 
+    it('(meta) Should initialize test with 3 mock wizards.', function () {
+      expect(reducer.getState().size).to.equal(3);
+    });
+
     it('Should set the supplied model on the entry that matches the target instance.', function () {
       const beforeModel = reducer.getState().first().get('model');
       const newModel    = {};
@@ -226,6 +222,10 @@ describe('(Reducer) Halcyon', function () {
       reducer.run(createWizard(_a = {}));
       reducer.run(createWizard(_b = {}));
       reducer.run(createWizard(_c = {}));
+    });
+
+    it('(meta) Should initialize test with 3 mock wizards.', function () {
+      expect(reducer.getState().size).to.equal(3);
     });
 
     it('Should update the "stepIndex" property on the target instance to match "index" in the action payload.', function () {

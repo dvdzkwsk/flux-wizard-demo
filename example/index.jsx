@@ -23,13 +23,10 @@ export default class Root extends React.Component {
     super();
   }
 
-  _onSubmit (model) {
-    console.log('model provided to wizard', _sampleModel);
-    console.log('wizard submitted with', model);
+  _onSubmit () {
   }
 
   _onCancel () {
-    console.log('Wizard was cancelled');
   }
 
   render () {
