@@ -103,10 +103,6 @@ export default class HalcyonWizard extends React.Component {
     }
   }
 
-  componentWillReceiveProps (nextProps) {
-
-  }
-
   componentWillUpdate (nextProps) {
     this._state = nextProps.halcyon.find(w => w.get('instance') === this);
 
