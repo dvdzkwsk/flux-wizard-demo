@@ -25,7 +25,8 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template : path.resolve(__dirname + '/example/index.html'),
-      hash     : true
+      hash     : true,
+      inject   : 'body'
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin()
