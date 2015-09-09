@@ -32,10 +32,7 @@ module.exports = {
     new webpack.NoErrorsPlugin()
   ],
   resolve : {
-    extensions : ['', '.js', '.jsx'],
-    alias : {
-      halcyon : path.resolve(__dirname + '/src/index.js')
-    }
+    extensions : ['', '.js', '.jsx']
   },
   module : {
     loaders : [

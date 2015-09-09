@@ -6,7 +6,8 @@ function makeDefaultConfig () {
   const preprocessors = {};
 
   preprocessors[KARMA_ENTRY_FILE] = ['webpack'];
-  preprocessors['src/**/*.js'] = ['webpack'];
+  preprocessors['src/**/*.js']    = ['webpack'];
+  preprocessors['src/**/*.jsx']   = ['webpack'];
 
   return {
     files : [

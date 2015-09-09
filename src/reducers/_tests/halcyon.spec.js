@@ -56,7 +56,7 @@ describe('(Reducer) Halcyon', function () {
       });
 
       it('Should define a property "instance".', function () {
-        expect(_item.get('instance')).to.be.defined;
+        expect(_item.get('instance')).to.exist;
       });
 
       it('Should reference the "instance" property provided in the action payload.', function () {
@@ -64,7 +64,7 @@ describe('(Reducer) Halcyon', function () {
       });
 
       it('Should define a property "stepIndex".', function () {
-        expect(_item.get('stepIndex')).to.be.defined;
+        expect(_item.get('stepIndex')).to.exist;
       });
 
       it('Should initialize the property "stepIndex" to 0.', function () {
@@ -73,7 +73,7 @@ describe('(Reducer) Halcyon', function () {
       });
 
       it('Should define a property "depth".', function () {
-        expect(_item.get('depth')).to.be.defined;
+        expect(_item.get('depth')).to.exist;
       });
 
       it('Should define the property depth as item\'s index in the list of wizards.', function () {
@@ -84,7 +84,7 @@ describe('(Reducer) Halcyon', function () {
       });
 
       it('Should define a property "model".', function () {
-        expect(_item.get('model')).to.be.defined;
+        expect(_item.get('model')).to.exist;
       });
 
       it('Should reference the "model" property provided in action payload.', function () {
@@ -104,7 +104,7 @@ describe('(Reducer) Halcyon', function () {
       const afterSecondAdd = reducer.run(createWizard());
 
       expect(afterSecondAdd.size).to.equal(2);
-      expect(afterSecondAdd.get(1)).to.be.defined;
+      expect(afterSecondAdd.get(1)).to.exist;
       expect(afterSecondAdd.get(0)).to.equal(first);
       expect(afterSecondAdd.get(1)).to.not.equal(first);
     });
@@ -144,22 +144,22 @@ describe('(Reducer) Halcyon', function () {
       // Delete _a
       expect(deletedA.size).to.equal(2);
       expect(deletedA.find(w => w.get('instance') === _a)).to.be.undefined;
-      expect(deletedA.find(w => w.get('instance') === _b)).to.be.defined;
-      expect(deletedA.find(w => w.get('instance') === _c)).to.be.defined;
+      expect(deletedA.find(w => w.get('instance') === _b)).to.exist;
+      expect(deletedA.find(w => w.get('instance') === _c)).to.exist;
 
       // Delete _b
       const deletedB = reducer.run(destroyWizard(_b));
       expect(deletedB.size).to.equal(1);
       expect(deletedB.find(w => w.get('instance') === _a)).to.be.undefined;
       expect(deletedB.find(w => w.get('instance') === _b)).to.be.undefined;
-      expect(deletedB.find(w => w.get('instance') === _c)).to.be.defined;
+      expect(deletedB.find(w => w.get('instance') === _c)).to.exist;
 
       // Attempt to delete _b again
       const deleteBAgain = reducer.run(destroyWizard(_b));
       expect(deleteBAgain.size).to.equal(1);
       expect(deleteBAgain.find(w => w.get('instance') === _a)).to.be.undefined;
       expect(deleteBAgain.find(w => w.get('instance') === _b)).to.be.undefined;
-      expect(deleteBAgain.find(w => w.get('instance') === _c)).to.be.defined;
+      expect(deleteBAgain.find(w => w.get('instance') === _c)).to.exist;
     });
 
   });
