@@ -43,9 +43,7 @@ export default class HalcyonBreadcrumbs extends React.Component {
         wizardsThatCantClose
       );
     } else {
-      wizardsThatNeedToClose.forEach(w => {
-        return w.get('instance')._onCancel()
-      });
+      wizardsThatNeedToClose.forEach(w => w.get('instance')._onCancel());
     }
   }
 

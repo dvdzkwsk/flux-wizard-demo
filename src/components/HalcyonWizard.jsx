@@ -39,7 +39,8 @@ export default class HalcyonWizard extends React.Component {
     model         : React.PropTypes.object.isRequired,
     onCancel      : React.PropTypes.func.isRequired,
     onSubmit      : React.PropTypes.func.isRequired,
-    onModelChange : React.PropTypes.func
+    onModelChange : React.PropTypes.func,
+    stepIndex     : React.PropTypes.number
   }
 
   constructor () {
@@ -102,8 +103,16 @@ export default class HalcyonWizard extends React.Component {
     }
   }
 
+  componentWillReceiveProps (nextProps) {
+
+  }
+
   componentWillUpdate (nextProps) {
     this._state = nextProps.halcyon.find(w => w.get('instance') === this);
+
+    if (this.props.stepIndex !== nextProps.stepIndex) {
+      this._actions.changeWizardStep(nextProps.stepIndex);
+    }
   }
 
   componentWillUnmount () {
@@ -114,25 +123,17 @@ export default class HalcyonWizard extends React.Component {
   // Halcyon Life Cycle Definition
   // ----------------------------------
   isCurrentStepExitable () {
-    if (
+    return !(
       typeof this.refs.step.shouldStepExit === 'function' &&
       !this.refs.step.shouldStepExit()
-    ) {
-      return false;
-    }
-
-    return true;
+    );
   }
 
   isCurrentStepValid () {
-    if (
+    return !(
       typeof this.refs.step.isStepValid === 'function' &&
       !this.refs.step.isStepValid()
-    ) {
-      return false;
-    }
-
-    return true;
+    );
   }
 
   /**
@@ -151,7 +152,7 @@ export default class HalcyonWizard extends React.Component {
   /**
   * Routes all internal navigation attempts. Helps hook into lifecycle methods
   * to determine if the wizard should proceed with the navigation.
-  * @param {integer} index Index of the target step.
+  * @param {integer} idx - Index of the target step.
   */
   attemptToNavigateToIndex (idx) {
     if (this.shouldWizardNavigate()) {
@@ -161,21 +162,18 @@ export default class HalcyonWizard extends React.Component {
 
   /**
   * Updates the active step of the wizard to the target index.
-  * @param {integer} index Index of the target step.
+  * @param {integer} idx - Index of the target step.
   */
   navigateToIndex (idx) {
     this._actions.setWizardModel(this.refs.step.state.model);
     this._actions.changeWizardStep(idx);
   }
+
   // ----------------------------------
   // State Convenience Methods
   // ----------------------------------
-  // TODO: Once MVP is complete, getState() methods can be optimized so that
-  // the wizards collection is not filtered every single time a method
-  // requests the current state.
-  // ---------------------------------
   /**
-  * @returns {array} Collection of direct child steps.
+  * @returns {Array.<Element>} Collection of direct child steps.
   */
   getSteps () {
     const steps = this.props.children;
@@ -188,21 +186,21 @@ export default class HalcyonWizard extends React.Component {
   }
 
   /**
-  * @returns {number} The index of the active step.
+  * @returns {Element} The active step component.
   */
   getCurrentStep () {
     return this.getSteps()[this.getCurrentStepIndex()];
   }
 
   /**
-  * @returns {number} The index of the active step.
+  * @returns {Number} The index of the active step.
   */
   getCurrentStepIndex () {
     return this._state.get('stepIndex');
   }
 
   /**
-  * @returns {boolean} whether or not the wizard can navigate backwards.
+  * @returns {Boolean} whether or not the wizard can navigate backwards.
   */
   canNavigateBackward () {
     const stepIdx = this.getCurrentStepIndex();
@@ -224,7 +222,7 @@ export default class HalcyonWizard extends React.Component {
   }
 
   /**
-  * @returns {boolean} True iff the wizard is on the last step.
+  * @returns {Boolean} True iff the wizard is on the last step.
   */
   canNavigateForward () {
     const stepIdx = this.getCurrentStepIndex();
@@ -246,7 +244,7 @@ export default class HalcyonWizard extends React.Component {
   }
 
   /**
-  * @returns {boolean} Tru iff the wizard component is the active wizard.
+  * @returns {Boolean} True iff the wizard component is the active wizard.
   */
   isActive () {
     if (this._state) {
@@ -262,30 +260,31 @@ export default class HalcyonWizard extends React.Component {
   // Event Handlers
   // ----------------------------------
   _onCancel () {
-    if (!this.isCurrentStepExitable()) {
-      return false;
-    }
-
-    if (typeof this.props.onCancel === 'function') {
+    if (this.isCurrentStepExitable()) {
       this.props.onCancel();
-      return true;
-    } else {
-      debug.warn([
-        'No cancel event provided to HalcyonWizard instance; wizard will',
-        'not destroy itself, it must be unmounted in its parent component.'
-      ].join(' '));
-      return false;
     }
   }
 
-  // TODO: validate current step
-  // TODO: validate all steps
   // TODO: this should update the reducer model and _then_ invoke callback
   _onSubmit () {
-    const model = this.refs.step.state.model.toJS();
+    const finalModel = this.refs.step.state.model;
 
-    // this._actions.setWizardModel(this.refs.step.state.model);
-    this.props.onSubmit(model);
+    // Verify that the current step is exitable
+    if (!this.isCurrentStepExitable()) {
+      return debug.warn(
+        `Could not submit wizard because the current step is not exitable.`
+      );
+    }
+
+    // Verify that the current step is valid
+    if (!this.isCurrentStepValid()) {
+      return debug.warn(
+        `Could not submit wizard because the current step is not valid.`
+      );
+    }
+
+    this._actions.setWizardModel(finalModel);
+    this.props.onSubmit(finalModel.toJS());
   }
 
   // ----------------------------------
