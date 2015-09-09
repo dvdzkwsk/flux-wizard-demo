@@ -1,8 +1,7 @@
 import React       from 'react';
 import halcyonStep from '../HalcyonStep';
 
-@halcyonStep('Mock Component Title')
-export default class MockComponent extends React.Component {
+export class MockComponent extends React.Component {
   constructor () {
     super();
   }
@@ -11,3 +10,5 @@ export default class MockComponent extends React.Component {
     return <h1>hello</h1>;
   }
 }
+
+export default halcyonStep('Mock Component Title')(MockComponent);

@@ -1,8 +1,11 @@
-import React         from 'react';
-import TestUtils     from 'react-addons-test-utils';
-import Immutable     from 'immutable';
-import halcyonStep   from '../HalcyonStep';
-import MockComponent from './MockComponent';
+import React       from 'react';
+import TestUtils   from 'react-addons-test-utils';
+import Immutable   from 'immutable';
+import halcyonStep from '../HalcyonStep';
+import {
+  MockComponent,
+  default as DecoratedMockComponent
+} from './MockComponent';
 
 const SAMPLE_MODEL = Immutable.Map({
   firstName : 'Michael',
@@ -11,7 +14,7 @@ const SAMPLE_MODEL = Immutable.Map({
 
 function renderIntoDocument (props) {
   return TestUtils.renderIntoDocument(
-    <MockComponent {...props} />
+    <DecoratedMockComponent {...props} />
   );
 }
 
@@ -55,16 +58,12 @@ describe('(Decorator) halcyonStep', function () {
       };
     });
 
-    it('Should be able to be rendered into the DOM.', function () {
-      expect(rendered).to.exist;
-    });
-
     it('Should have a defaultProp title matching the first decorator\'s first argument.', function () {
-      expect(MockComponent.defaultProps).to.have.property('title', 'Mock Component Title');
+      expect(DecoratedMockComponent.defaultProps).to.have.property('title', 'Mock Component Title');
       rendered.setModel(SAMPLE_MODEL);
     });
 
-    describe('Initial State', function () {
+    describe('(Lifecycle) Initial State', function () {
       it('Should set "dirty" to false.', function () {
         expect(rendered.state.dirty).to.be.false;
       });
@@ -91,6 +90,72 @@ describe('(Decorator) halcyonStep', function () {
 
       it('Should return true by default.', function () {
         expect(rendered.shouldStepExit()).to.be.true;
+      });
+    });
+
+    describe('(Lifecycle) Render', function () {
+      var findResetModelButton, component;
+
+      beforeEach(function () {
+        findResetModelButton = () =>
+          TestUtils.findRenderedDOMComponentWithClass(rendered, 'halcyon__step__reset');
+
+
+        component = TestUtils.findRenderedComponentWithType(rendered, MockComponent);
+      });
+
+      it('Should be able to be rendered into the DOM.', function () {
+        expect(rendered).to.exist;
+      });
+
+      it('Should render without a reset model button if state.dirty is false.', function () {
+        expect(findResetModelButton).to.throw;
+      });
+
+      it('Should render with a reset model button if state.dirty is true.', function (done) {
+        rendered.awaitStateChange({
+          2 : () => {
+            const button = findResetModelButton();
+
+            expect(TestUtils.isDOMComponent(button)).to.be.true;
+            done();
+          }
+        });
+
+        rendered.setModel(Immutable.Map({ fizz : 'buzz' }));
+      });
+
+      it('Should render the base component as a child.', function () {
+        expect(TestUtils.isCompositeComponent(component)).to.be.true;
+      });
+
+      describe('Injected Properties', function () {
+        it('Should inject an object "model" into the component.', function () {
+          expect(component.props.model).to.be.an('object');
+        });
+
+        it('Should call ".toJS()" before injecting the model.', function () {
+          expect(Immutable.Map.isMap(rendered.state.model)).to.be.true;
+          expect(Immutable.Map.isMap(component.props.model)).to.be.false;
+        });
+
+        it('Should inject a function "bindTo".', function () {
+          expect(component.props.bindTo).to.be.a('function');
+        });
+
+        it('Should inject a function "setModel".', function () {
+          expect(component.props.setModel).to.be.a('function');
+        });
+
+        it('Should inject a function "setProperty".', function () {
+          expect(component.props.setProperty).to.be.a('function');
+        });
+      });
+
+      it('Should apply a ref of "step" to the base component.', function () {
+        expect(rendered.refs.step).to.exist;
+        expect(TestUtils.isCompositeComponent(rendered.refs.step)).to.be.true;
+        expect(rendered.refs.step).to.equal(component);
       });
     });
 
@@ -199,32 +264,6 @@ describe('(Decorator) halcyonStep', function () {
 
         expect(rendered.state.model).to.equal(SAMPLE_MODEL);
         rendered.setModel(Immutable.Map({ foo : 'bar' }));
-      });
-    });
-
-    describe('Rendering', function () {
-      var findResetModelButton;
-
-      beforeEach(function () {
-        findResetModelButton = () =>
-          TestUtils.findRenderedDOMComponentWithClass(rendered, 'halcyon__step__reset');
-      });
-
-      it('Should render without a reset model button if state.dirty is false.', function () {
-        expect(findResetModelButton).to.throw;
-      });
-
-      it('Should render with a reset model button if state.dirty is true.', function (done) {
-        rendered.awaitStateChange({
-          2 : () => {
-            const button = findResetModelButton();
-
-            expect(TestUtils.isDOMComponent(button)).to.be.true;
-            done();
-          }
-        });
-
-        rendered.setModel(Immutable.Map({ fizz : 'buzz' }));
       });
     });
   });
