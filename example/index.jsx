@@ -23,18 +23,10 @@ export default class Root extends React.Component {
     super();
   }
 
-  _onSubmit () {
-  }
-
-  _onCancel () {
-  }
-
   render () {
     return (
       <Provider store={store}>
-        <EditUserWizard model={_sampleModel}
-                        onSubmit={::this._onSubmit}
-                        onCancel={::this._onCancel} />
+        <EditUserWizard model={_sampleModel} />
       </Provider>
     );
   }

@@ -1,5 +1,6 @@
 import React           from 'react';
 import { halcyonStep } from '../../src';
+import * as debug      from '../../src/lib/debug';
 
 @halcyonStep('Edit User Info')
 export default class EditUserInfoStep extends React.Component {
@@ -12,7 +13,14 @@ export default class EditUserInfoStep extends React.Component {
     super();
   }
 
-  _onAgeChange () {
+  isStepValid () {
+    const { model } = this.props;
+
+    if (model.age < 18) {
+      debug.error('Age must be >= 18, silly!');
+      return false;
+    }
+    return true;
   }
 
   render () {
@@ -37,7 +45,7 @@ export default class EditUserInfoStep extends React.Component {
           <input type='number'
                  className='form-control'
                  value={model.age}
-                 onChange={::this._onAgeChange}/>
+                 onChange={this.props.bindTo('age')}/>
         </div>
       </div>
     );
