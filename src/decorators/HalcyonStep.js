@@ -1,6 +1,8 @@
 import React from 'react';
 
-export function createStepComponent (name, Component) {
+// TODO: general cleanup
+// TODO: documentation
+function createStepComponent (name, Component) {
   return class HalcyonStep extends React.Component {
     static defaultProps = {
       title : name
@@ -22,7 +24,7 @@ export function createStepComponent (name, Component) {
     componentDidUpdate (nextProps, nextState) {
       if (
         !nextState.dirty &&
-        nextState.model !== nextProps.model
+        this.state.model !== nextState.model
       ) {
         this.setState({
           dirty : true
@@ -72,7 +74,7 @@ export function createStepComponent (name, Component) {
     renderResetModelButton () {
       if (this.state.dirty) {
         return (
-          <button className='btn btn-block btn-default'
+          <button className='btn btn-block btn-default halcyon__step__reset'
                   onClick={::this.resetModel}>
             Undo Changes
           </button>

@@ -42,7 +42,15 @@ describe('(Decorator) halcyonStep', function () {
 
       rendered.awaitStateChange = function (cb) {
         rendered.setState = function (state) {
-          setState(state, () => cb(rendered.state, ++callCount));
+          setState(state, () => {
+            callCount++;
+
+            if (typeof cb === 'function') {
+              cb(callCount);
+            } else if (typeof cb === 'object') {
+              cb[callCount] && cb[callCount]();
+            }
+          });
         };
       };
     });
@@ -100,8 +108,8 @@ describe('(Decorator) halcyonStep', function () {
       });
 
       it('Should apply the new value to the target path on the internal state\'s model.', function (done) {
-        rendered.awaitStateChange(function (newState) {
-          expect(newState.model.get('firstName')).to.equal('Michael');
+        rendered.awaitStateChange(function () {
+          expect(rendered.state.model.get('firstName')).to.equal('Michael');
           done();
         });
 
@@ -109,8 +117,8 @@ describe('(Decorator) halcyonStep', function () {
       });
 
       it('Should accept path as a dot-delimited string.', function (done) {
-        rendered.awaitStateChange(function (newState) {
-          const model = newState.model.toJS();
+        rendered.awaitStateChange(function () {
+          const model = rendered.state.model.toJS();
 
           expect(model.address.zipcode).to.equal('123456');
           done();
@@ -120,8 +128,8 @@ describe('(Decorator) halcyonStep', function () {
       });
 
       it('Should accept path as an array of property names.', function (done) {
-        rendered.awaitStateChange(function (newState) {
-          const model = newState.model.toJS();
+        rendered.awaitStateChange(function () {
+          const model = rendered.state.model.toJS();
 
           expect(model.address.zipcode).to.equal('000123');
           done();
@@ -147,12 +155,12 @@ describe('(Decorator) halcyonStep', function () {
         rendered.setModel(Immutable.Map({ foo : 'bar' }));
       });
 
-      it('Should apply a second state update if the model has changed.', function () {
-        rendered.awaitStateChange(function (newState, called) {
+      it('Should apply a second state update if the model has changed.', function (done) {
+        rendered.awaitStateChange(function (called) {
           if (called === 1) {
-            expect(newState.model).to.not.equal(SAMPLE_MODEL);
+            expect(rendered.state.model).to.not.equal(SAMPLE_MODEL);
           } else if (called === 2) {
-            expect(newState.dirty).to.be.true;
+            expect(rendered.state.dirty).to.be.true;
             done();
           }
         });
@@ -160,12 +168,12 @@ describe('(Decorator) halcyonStep', function () {
         rendered.setModel(Immutable.Map({ foo : 'bar' }));
       });
 
-      it('Should set "dirty" state to true in the second state update.', function () {
-        rendered.awaitStateChange(function (newState, called) {
+      it('Should set "dirty" state to true in the second state update.', function done() {
+        rendered.awaitStateChange(function (called) {
           if (called === 1) {
-            expect(newState.model).to.not.equal(SAMPLE_MODEL);
+            expect(rendered.state.model).to.not.equal(SAMPLE_MODEL);
           } else if (called === 2) {
-            expect(newState.dirty).to.be.true;
+            expect(rendered.state.dirty).to.be.true;
             done();
           }
         });
@@ -178,23 +186,45 @@ describe('(Decorator) halcyonStep', function () {
       it('Should reset this.state.model to match this.props.model.', function (done) {
         const newModel = Immutable.Map({ foo : 'bar' });
 
-        rendered.awaitStateChange(function (newState, called) {
-          const expectations = {
-            1 : () => {
-              expect(newState.model).to.not.equal(SAMPLE_MODEL);
-              rendered.resetModel();
-            },
-            2 : () => {
-              expect(newState.model).to.equal(SAMPLE_MODEL);
-              done();
-            }
-          };
-
-          expectations[called]();
+        rendered.awaitStateChange({
+          1 : () => {
+            expect(rendered.state.model).to.not.equal(SAMPLE_MODEL);
+            rendered.resetModel();
+          },
+          2 : () => {
+            expect(rendered.state.model).to.equal(SAMPLE_MODEL);
+            done();
+          }
         });
 
         expect(rendered.state.model).to.equal(SAMPLE_MODEL);
         rendered.setModel(Immutable.Map({ foo : 'bar' }));
+      });
+    });
+
+    describe('Rendering', function () {
+      var findResetModelButton;
+
+      beforeEach(function () {
+        findResetModelButton = () =>
+          TestUtils.findRenderedDOMComponentWithClass(rendered, 'halcyon__step__reset');
+      });
+
+      it('Should render without a reset model button if state.dirty is false.', function () {
+        expect(findResetModelButton).to.throw;
+      });
+
+      it('Should render with a reset model button if state.dirty is true.', function (done) {
+        rendered.awaitStateChange({
+          2 : () => {
+            const button = findResetModelButton();
+
+            expect(TestUtils.isDOMComponent(button)).to.be.true;
+            done();
+          }
+        });
+
+        rendered.setModel(Immutable.Map({ fizz : 'buzz' }));
       });
     });
   });
