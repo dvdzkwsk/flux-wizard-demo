@@ -26,10 +26,10 @@ function activeWizardOnly (target, key, descriptor) {
   return descriptor;
 }
 
-@connect(state => ({
+const mapDispatchToProps = (state) => ({
   halcyon : state.halcyon
-}))
-export default class HalcyonWizard extends React.Component {
+});
+export class HalcyonWizard extends React.Component {
   static propTypes = {
     children      : React.PropTypes.oneOfType([
       React.PropTypes.element,
@@ -37,6 +37,7 @@ export default class HalcyonWizard extends React.Component {
     ]),
     halcyon       : React.PropTypes.object.isRequired,
     model         : React.PropTypes.object.isRequired,
+    dispatch      : React.PropTypes.func.isRequired,
     onCancel      : React.PropTypes.func.isRequired,
     onSubmit      : React.PropTypes.func.isRequired,
     onModelChange : React.PropTypes.func,
@@ -118,25 +119,45 @@ export default class HalcyonWizard extends React.Component {
   // ----------------------------------
   // Halcyon Life Cycle Definition
   // ----------------------------------
+  /**
+  * Determines whether or not the current step component can be safely
+  * exited by invoking its "shouldStepExit" method.
+  * @returns {boolean} whether or not the current step is valid.
+  */
   isCurrentStepExitable () {
-    return !(
-      typeof this.refs.step.shouldStepExit === 'function' &&
-      !this.refs.step.shouldStepExit()
-    );
+    if (typeof this.refs.step.shouldStepExit === 'function') {
+      return this.refs.step.shouldStepExit();
+    } else {
+      debug.warn(
+        'Current step did not provide a "shouldStepExit" method, ' +
+        'wizard will assume step is exitable and continue.'
+      );
+      return true;
+    }
   }
 
+  /**
+  * Determines whether or not the current step component is valid by
+  * invoking its "isStepValid" method.
+  * @returns {Boolean} whether or not the current step is valid.
+  */
   isCurrentStepValid () {
-    return !(
-      typeof this.refs.step.isStepValid === 'function' &&
-      !this.refs.step.isStepValid()
-    );
+    if (typeof this.refs.step.isStepValid === 'function') {
+      return this.refs.step.isStepValid();
+    } else {
+      debug.warn(
+        'Current step did not provide an "isStepValid" method, ' +
+        'wizard will assume model is valid and continue.'
+      );
+      return true;
+    }
   }
 
   /**
   * Determines whether or not a navigation attempt should be allowed to
   * continue. By default will always return true; to prevent a navigation
   * attempt return false.
-  * @returns {boolean} Whether or not to stop a navigation attempt.
+  * @returns {Boolean} Whether or not to stop a navigation attempt.
   */
   shouldWizardNavigate () {
     return this.isCurrentStepExitable() && this.isCurrentStepValid();
@@ -148,7 +169,7 @@ export default class HalcyonWizard extends React.Component {
   /**
   * Routes all internal navigation attempts. Helps hook into lifecycle methods
   * to determine if the wizard should proceed with the navigation.
-  * @param {integer} idx - Index of the target step.
+  * @param {Int} idx - Index of the target step.
   */
   attemptToNavigateToIndex (idx) {
     if (this.shouldWizardNavigate()) {
@@ -158,7 +179,7 @@ export default class HalcyonWizard extends React.Component {
 
   /**
   * Updates the active step of the wizard to the target index.
-  * @param {integer} idx - Index of the target step.
+  * @param {Int} idx - Index of the target step.
   */
   navigateToIndex (idx) {
     this._actions.setWizardModel(this.refs.step.state.model);
@@ -169,7 +190,7 @@ export default class HalcyonWizard extends React.Component {
   // State Convenience Methods
   // ----------------------------------
   /**
-  * @returns {Array.<Element>} Collection of direct child steps.
+  * @returns {Array.<CompositeComponent>} Collection of direct child steps.
   */
   getSteps () {
     const steps = this.props.children;
@@ -182,14 +203,14 @@ export default class HalcyonWizard extends React.Component {
   }
 
   /**
-  * @returns {Element} The active step component.
+  * @returns {CompositeComponent} The active step component.
   */
   getCurrentStep () {
     return this.getSteps()[this.getCurrentStepIndex()];
   }
 
   /**
-  * @returns {Number} The index of the active step.
+  * @returns {Int} The index of the active step.
   */
   getCurrentStepIndex () {
     return this._state.get('stepIndex');
@@ -207,9 +228,8 @@ export default class HalcyonWizard extends React.Component {
     // If all steps behind the current step are disabled, disable backward
     // navigation.
     const activePreviousSteps = this.getSteps()
-      .filter((step, idx) => (
-        idx < stepIdx && !step.props.disabled
-      ));
+      .take(idx)
+      .filter(step => !step.props.disabled)
 
     if (activePreviousSteps.length === 0) return false;
 
@@ -222,34 +242,29 @@ export default class HalcyonWizard extends React.Component {
   */
   canNavigateForward () {
     const stepIdx = this.getCurrentStepIndex();
+    const steps   = this.getSteps();
 
     // If wizard is on the last step, prohibit forward navigation.
-    if (stepIdx === this.getSteps().length) return false;
+    if (stepIdx === steps.length) return false;
 
     // If all steps ahead of the current step are disabled, disable forward
     // navigation.
-    const activeFutureSteps = this.getSteps()
-      .filter((step, idx) => (
-        idx > stepIdx && !step.props.disabled
-      ));
+    const enabledFutureSteps = steps
+      .filter((step, idx) => idx > stepIdx && !step.props.disabled);
 
-    if (activeFutureSteps.length === 0) return false;
-
-    // All checks pass, wizard can navigate forward.
-    return true;
+    return enabledFutureSteps.length > 0;
   }
 
   /**
-  * @returns {Boolean} True iff the wizard component is the active wizard.
+  * @returns {Boolean} Whether or not the current wizard instance is the
+  * active wizard within the set of all instantiated wizards. This is based
+  * on its position on the wizard stack, where the active wizard is at The
+  * bottom of the stack (newest).
   */
   isActive () {
-    if (this._state) {
-      const selfDepth = this._state.get('depth');
+    const selfDepth = this._state.get('depth');
 
-      return (selfDepth + 1) === this.props.halcyon.size;
-    } else {
-      return false;
-    }
+    return (selfDepth + 1) === this.props.halcyon.size;
   }
 
   // ----------------------------------
@@ -286,6 +301,17 @@ export default class HalcyonWizard extends React.Component {
   // ----------------------------------
   // Rendering Logic
   // ----------------------------------
+  /**
+  * Renders the active step component based on the "stepIndex" provided by
+  * the global state for this wizard instance. Applies additional properties
+  * to the target component for convenience, including:
+  * -------------------------
+  * {ref} ref - React ref for internal use.
+  * {Immutable.Map} model - current state of the tracked internal model,
+  * originally supplied through props.model.
+  * -------------------------
+  * @returns {CompositeComponent} Active step component
+  */
   renderStepComponent (component) {
     if (!component) {
       debug.warn(
@@ -300,11 +326,23 @@ export default class HalcyonWizard extends React.Component {
     });
   }
 
+  /**
+  * Renders the HalcyonBreadcrumbs component iff the current wizard instance
+  * is the active wizard.
+  * @returns {CompositeComponent} HalcyonViewportFooter
+  */
   @activeWizardOnly
   renderBreadcrumbs () {
     return <HalcyonBreadcrumbs />;
   }
 
+  /**
+  * TODO: Refactor this into a HalcyonSidebar Component.
+  * Renders the sidebar component iff the current wizard instance
+  * is the active wizard.
+  * @returns {Element} Regular DOM element wrapping the HalcyonStepSelector
+  * CompositeComponent.
+  */
   @activeWizardOnly
   renderSidebar () {
     return (
@@ -315,6 +353,11 @@ export default class HalcyonWizard extends React.Component {
     );
   }
 
+  /**
+  * Renders the HalcyonViewportFooter component iff the current wizard instance
+  * is the active wizard.
+  * @returns {CompositeComponent} HalcyonViewportFooter
+  */
   @activeWizardOnly
   renderViewportFooter () {
     const navigate = this.attemptToNavigateToIndex;
@@ -377,3 +420,5 @@ export default class HalcyonWizard extends React.Component {
     );
   }
 }
+
+export default connect(mapDispatchToProps)(HalcyonWizard);
