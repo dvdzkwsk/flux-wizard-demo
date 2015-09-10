@@ -76,7 +76,7 @@ describe('(Component) HalcyonDirectionalNavigation', function () {
       it('Should call props.onPrevious on click.', function () {
         var clicked = false;
         const previous = findPreviousButton(renderComponent({
-          onPrevious : () => (clicked = true) && true
+          onPrevious : () => { clicked = true }
         }));
 
         expect(clicked).to.be.false;
@@ -88,7 +88,7 @@ describe('(Component) HalcyonDirectionalNavigation', function () {
         var clicked = false;
         const previous = findPreviousButton(renderComponent({
           disabled   : true,
-          onPrevious : () => clicked = true
+          onPrevious : () => { clicked = true }
         }));
 
         expect(clicked).to.be.false;
@@ -135,7 +135,7 @@ describe('(Component) HalcyonDirectionalNavigation', function () {
       it('Should call props.onNext on click.', function () {
         var clicked = false;
         const next = findNextButton(renderComponent({
-          onNext : () => clicked = true
+          onNext : () => { clicked = true; }
         }));
 
         expect(clicked).to.be.false;
@@ -147,7 +147,7 @@ describe('(Component) HalcyonDirectionalNavigation', function () {
         var clicked = false;
         const next = findNextButton(renderComponent({
           disabled : true,
-          onNext   : () => clicked = true
+          onNext   : () => { clicked = true; }
         }));
 
         expect(clicked).to.be.false;

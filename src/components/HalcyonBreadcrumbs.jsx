@@ -3,10 +3,10 @@ import { connect }           from 'react-redux';
 import { getComponentTitle } from '../lib/component';
 import * as debug            from '../lib/debug';
 
-@connect(state => ({
+const mapDispatchToProps = (state) => ({
   wizards : state.halcyon
-}))
-export default class HalcyonBreadcrumbs extends React.Component {
+});
+export class HalcyonBreadcrumbs extends React.Component {
   static propTypes = {
     wizards : React.PropTypes.object.isRequired
   }
@@ -65,7 +65,7 @@ export default class HalcyonBreadcrumbs extends React.Component {
     const breadcrumbs = this.getBreadcrumbsForWizards(this.props.wizards);
 
     return (
-      <ol className='breadcrumb'>
+      <ol className='halcyon-breadcrumbs'>
         {breadcrumbs.map((link, idx) => (
           <li key={idx}>
             <a href='#' onClick={this.onClick.bind(this, link)}>
@@ -77,3 +77,5 @@ export default class HalcyonBreadcrumbs extends React.Component {
     );
   }
 }
+
+export default connect(mapDispatchToProps)(HalcyonBreadcrumbs);

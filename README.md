@@ -51,6 +51,8 @@ Requirements
 
 **Build**: Build system capable of performing ES6 to ES5 transpilation. If you wish to use the decorator syntax (e.g. with `@halcyonStep`) you must enable support for it in your transpiler (Babel, Traceur).
 
+**Redux**: The wizard currently relies on Redux for state management. See [Installation](#installation) for more details on how to integrate it.
+
 Installation
 ------------
 
@@ -121,11 +123,10 @@ class YourStep extends React.Component {
     super();
   }
 
-  // the halcyonStep higher order component injects the model into your
-  // component, and provides convenience methods such as "bindTo" to
-  // automatically update the model on change. The great thing is, the actual
-  // model remains immutable the whole time, but you don't have to worry
-  // about it! Just _react_ to its changes.
+  // the halcyonStep higher order component injects the model and
+  // convenience functions into your components. The great thing is, by updating
+  // your model via this API the internal model remains immutable the whole
+  // time, but you don't have to worry about it! Just _react_ to its changes.
   render () {
     const { model } = this.props;
 
@@ -197,3 +198,4 @@ Todo
   * [ ] Next/Previous need to skip disabled steps
   * [ ] Step selector needs to indicate disabled steps
 * halcyonDecorator could probably do something similar to `@connect`
+* [ ] Refactor tests when time allows
