@@ -1,7 +1,7 @@
 import React     from 'react';
 import TestUtils from 'react-addons-test-utils';
 import {
-  HalcyonWizard
+  HalcyonWizard,
   default as ConnectedHalcyonWizard
 } from '../HalcyonWizard';
 

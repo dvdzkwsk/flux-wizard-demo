@@ -122,7 +122,7 @@ export class HalcyonWizard extends React.Component {
   /**
   * Determines whether or not the current step component can be safely
   * exited by invoking its "shouldStepExit" method.
-  * @returns {boolean} whether or not the current step is valid.
+  * @returns {Boolean} whether or not the current step is valid.
   */
   isCurrentStepExitable () {
     if (typeof this.refs.step.shouldStepExit === 'function') {
@@ -340,7 +340,7 @@ export class HalcyonWizard extends React.Component {
   * TODO: Refactor this into a HalcyonSidebar Component.
   * Renders the sidebar component iff the current wizard instance
   * is the active wizard.
-  * @returns {Element} Regular DOM element wrapping the HalcyonStepSelector
+  * @returns {DOM} Regular DOM element wrapping the HalcyonStepSelector
   * CompositeComponent.
   */
   @activeWizardOnly
