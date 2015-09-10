@@ -22,7 +22,6 @@ export default class HalcyonViewportFooter extends React.Component {
     super();
   }
 
-
   render () {
     return (
       <div className='clearfix'>
