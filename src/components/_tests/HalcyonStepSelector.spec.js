@@ -14,7 +14,6 @@ const defaultProps = {
 function renderComponent (propOverrides) {
   const props = {...defaultProps, ...propOverrides};
 
-  console.log(props.onSelect.toString());
   return TestUtils.renderIntoDocument(<HalcyonStepSelector {...props} />);
 }
 
