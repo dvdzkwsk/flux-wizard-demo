@@ -25,8 +25,8 @@
   "homepage": "https://github.com/davezuko/halcyon#readme",
   "dependencies": {
     "immutable": "^3.7.4",
-    "react": "0.14.0-beta3",
-    "react-dom": "0.14.0-beta3",
+    "react": "0.14.0-rc1",
+    "react-dom": "0.14.0-rc1",
     "react-redux": "^1.0.1",
     "redux": "^1.0.1"
   },
@@ -44,7 +44,7 @@
     "karma-webpack": "^1.7.0",
     "phantomjs": "^1.9.17",
     "phantomjs-polyfill": "0.0.1",
-    "react-addons-test-utils": "^0.14.0-beta3",
+    "react-addons-test-utils": "^0.14.0-rc1",
     "react-hot-loader": "^1.2.7",
     "webpack": "^1.9.11",
     "webpack-dev-server": "^1.9.0"
