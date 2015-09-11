@@ -107,7 +107,9 @@ describe('(Component) HalcyonBreadcrumbs', function () {
           expect(x.title).to.be.a('string');
         });
       });
+    });
 
+    describe('Breadcrumb Events', function () {
       it('Should not close the wizard of the clicked breadcrumb.', function () {
         _mockWizardCloseSpy.should.not.have.been.called;
 
@@ -128,9 +130,6 @@ describe('(Component) HalcyonBreadcrumbs', function () {
     it('Should render as an <ol>.', function () {
       expect(component.type).to.equal('ol');
     });
-
-
-
   });
 });
 
