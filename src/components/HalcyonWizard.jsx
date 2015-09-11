@@ -16,7 +16,7 @@ import * as debug             from '../lib/debug';
 * @returns {function} lifts the target function so that it will only be called
 * if its caller is the active wizard instance.
 */
-function activeWizardOnly (target, key, descriptor) {
+export function activeWizardOnly (target, key, descriptor) {
   const fn = descriptor.value;
 
   descriptor.value = function calledIfWizardIsActive () {

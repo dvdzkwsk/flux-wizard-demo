@@ -3,6 +3,7 @@ import Immutable from 'immutable';
 import TestUtils from 'react-addons-test-utils';
 import * as wizardActions from '../../actions/wizard';
 import {
+  activeWizardOnly,
   HalcyonWizard,
   default as ConnectedHalcyonWizard
 } from '../HalcyonWizard';
@@ -131,6 +132,49 @@ describe('(Component) HalcyonWizard', function () {
   });
 
   describe('(Deorator) activeWizardOnly', function () {
+    let _instance;
+    const fn = sinon.spy();
+
+    beforeEach(function () {
+      class Foo {
+        @activeWizardOnly
+        test () { fn(); return 'hello'; }
+      }
+
+      fn.reset();
+      _instance = new Foo();
+    });
+
+    it('Should return a function.', function () {
+      expect(_instance.test).to.be.a('function');
+    });
+
+    it('Should return null if "this.isActive()" returns false.', function () {
+      _instance.isActive = () => false;
+
+      expect(_instance.test()).to.equal(null);
+    });
+
+    it('Should not call the original method if "this.isActive() returns false".', function () {
+      _instance.isActive = () => false;
+
+      _instance.test();
+      fn.should.not.have.been.called;
+    });
+
+    it('Should call the original method if "this.isActive() returns true".', function () {
+      _instance.isActive = () => true;
+
+      _instance.test();
+      fn.should.have.been.calledOnce;
+    });
+
+
+    it('Should return the result of the original method if "this.isActive()" returns true.', function () {
+      _instance.isActive = () => true;
+
+      expect(_instance.test()).equal('hello');
+    });
 
   });
 
