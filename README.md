@@ -124,7 +124,7 @@ class YourStep extends React.Component {
   }
 
   // the halcyonStep higher order component injects the model and
-  // convenience functions into your components. The great thing is, by updating
+  // convenience functions into your component. The great thing is, by updating
   // your model via this API the internal model remains immutable the whole
   // time, but you don't have to worry about it! Just _react_ to its changes.
   render () {
