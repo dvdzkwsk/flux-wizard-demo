@@ -1,5 +1,15 @@
-import React    from 'react';
-import ReactDOM from 'react-dom';
-import Root     from './containers/Root';
+import React     from 'react';
+import ReactDOM  from 'react-dom';
+import Root      from './containers/root';
 
-ReactDOM.render(<Root />, document.getElementById('root'));
+const noop  = () => {};
+const model = {
+  firstName : 'Michael',
+  lastName  : 'Scott',
+  friends   : []
+};
+
+ReactDOM.render(
+  <Root model={model} onSubmit={noop} onCancel={noop} />,
+  document.getElementById('root')
+);

@@ -99,6 +99,15 @@ describe('(Component) HalcyonBreadcrumbs', function () {
           expect(x.title).to.be.a('string');
         });
       });
+
+      it('Should not close the wizard of the clicked breadcrumb.', function () {
+        console.log(breadcrumbs);
+        TestUtils.Simulate.click(breadcrumbs[0]);
+        expect(getStoreState().wizards).to.have.length(1);
+
+        TestUtils.Simulate.click(breadcrumbs[1]);
+        expect(getStoreState().wizards).to.have.length(1);
+      });
     });
   });
 

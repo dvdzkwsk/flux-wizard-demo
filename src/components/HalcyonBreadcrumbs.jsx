@@ -65,7 +65,7 @@ export class HalcyonBreadcrumbs extends React.Component {
     const breadcrumbs = this.getBreadcrumbsForWizards(this.props.wizards);
 
     return (
-      <ol className='halcyon-breadcrumbs'>
+      <ol className='breadcrumb halcyon-breadcrumbs'>
         {breadcrumbs.map((link, idx) => (
           <li key={idx}>
             <a href='#' onClick={this.onClick.bind(this, link)}>
