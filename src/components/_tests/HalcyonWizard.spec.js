@@ -42,14 +42,14 @@ describe('(Component) HalcyonWizard', function () {
   });
 
 
-  describe('bindActionCreatorsToSelf', function () {
-    let _this, fn1, fn2, dispatch;
+  describe('(Method) bindActionCreatorsToSelf', function () {
+    let _this, fn1, fn2;
 
     beforeEach(function () {
-      dispatch = sinon.spy();
-      fn1      = sinon.spy();
-      fn2      = sinon.spy();
-      _this    = { props : { dispatch } };
+      spies.dispatch.reset();
+      fn1   = sinon.spy();
+      fn2   = sinon.spy();
+      _this = { props : { dispatch : spies.dispatch } };
 
       rendered.bindActionCreatorsToSelf.call(_this, {
         fn1, fn2
@@ -66,14 +66,14 @@ describe('(Component) HalcyonWizard', function () {
     });
 
     it('Should call dispatch when an action is invoked.', function () {
-      dispatch.should.not.have.been.called;
+      spies.dispatch.should.not.have.been.called;
 
       _this._actions.fn1();
-      dispatch.should.have.been.calledOnce;
+      spies.dispatch.should.have.been.calledOnce;
       _this._actions.fn2();
-      dispatch.should.have.been.calledTwice;
+      spies.dispatch.should.have.been.calledTwice;
       _this._actions.fn1();
-      dispatch.should.have.been.calledThrice;
+      spies.dispatch.should.have.been.calledThrice;
     });
 
     it('Should call action with its first argument as "this".', function () {
@@ -91,34 +91,42 @@ describe('(Component) HalcyonWizard', function () {
       _this._actions.fn1(1, 2, 3);
       fn1.should.have.been.calledWith(_this, 1, 2, 3);
     });
-  });
 
-  describe('Default Actions', function () {
+    describe('Default Actions', function () {
 
-    it('Should have actions automatically bound after mounting.', function () {
-      expect(rendered._actions).to.be.an('object');
-    });
+      it('Should have actions automatically bound after mounting.', function () {
+        expect(rendered._actions).to.be.an('object');
+      });
 
-    it('Should bind an action for "createWizard".', function () {
-      expect(rendered._actions.createWizard).to.be.a('function');
-    });
+      it('Should bind an action for "createWizard".', function () {
+        expect(rendered._actions.createWizard).to.be.a('function');
+      });
 
-    it('Should bind an action for "destroyWizard".', function () {
-      expect(rendered._actions.destroyWizard).to.be.a('function');
-    });
+      it('Should bind an action for "destroyWizard".', function () {
+        expect(rendered._actions.destroyWizard).to.be.a('function');
+      });
 
-    it('Should bind an action for "changeWizardStep".', function () {
-      expect(rendered._actions.changeWizardStep).to.be.a('function');
-    });
+      it('Should bind an action for "changeWizardStep".', function () {
+        expect(rendered._actions.changeWizardStep).to.be.a('function');
+      });
 
-    it('Should bind an action for "setWizardModel".', function () {
-      expect(rendered._actions.setWizardModel).to.be.a('function');
-    });
+      it('Should bind an action for "setWizardModel".', function () {
+        expect(rendered._actions.setWizardModel).to.be.a('function');
+      });
 
-    it('Should bind all actions from wizardActions.', function () {
-      for (let prop in wizardActions) {
-        expect(rendered._actions[prop]).to.be.a('function');
-      }
+      it('Should bind all actions from wizardActions.', function () {
+        for (let prop in wizardActions) {
+          expect(rendered._actions[prop]).to.be.a('function');
+        }
+      });
+
+      it('Should dispatch action when action method is invoked.', function () {
+        for (let prop in rendered._actions) {
+          spies.dispatch.reset();
+          rendered._actions[prop]();
+          spies.dispatch.should.have.been.calledOnce;
+        }
+      });
     });
   });
 
