@@ -15,7 +15,7 @@ function makeDefaultConfig () {
       './' + KARMA_ENTRY_FILE
     ],
     singleRun  : process.env.NODE_ENV === 'production',
-    frameworks : ['chai', 'mocha'],
+    frameworks : ['mocha', 'sinon-chai'],
     preprocessors : preprocessors,
     reporters : ['spec'],
     browsers : ['PhantomJS'],
@@ -33,7 +33,7 @@ function makeDefaultConfig () {
     plugins : [
       require('karma-webpack'),
       require('karma-mocha'),
-      require('karma-chai'),
+      require('karma-sinon-chai'),
       require('karma-phantomjs-launcher'),
       require('karma-spec-reporter')
     ]

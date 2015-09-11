@@ -23,8 +23,8 @@ function shallowRenderComponent (component, props = {}) {
 // Base HalcyonBreadcrumbs Component Tests
 // ------------------------------------
 describe('(Component) HalcyonBreadcrumbs', function () {
-  const _model = { firstName : 'Michael' };
-  let component, rendered, defaultProps, wizards, MockWizard;
+  let component, rendered, defaultProps, wizards, MockWizard,
+  _mockWizardCloseSpy, _mockWizardSubmitSpy;
 
   const shallowRenderWith = (props = {}) => {
     const mergedProps = {...defaultProps, ...props};
@@ -40,8 +40,16 @@ describe('(Component) HalcyonBreadcrumbs', function () {
 
   beforeEach(function () {
     MockWizard = createMockWizardClass();
+    _mockWizardCloseSpy  = sinon.spy();
+    _mockWizardSubmitSpy = sinon.spy();
 
-    renderComponent(<MockWizard model={_model}/>);
+    const mockWizardProps = {
+      model    : { firstName : 'Michael' },
+      onClose  : _mockWizardCloseSpy,
+      onSubmit : _mockWizardSubmitSpy
+    };
+
+    renderComponent(<MockWizard {...mockWizardProps}/>);
     wizards = getStoreState().halcyon;
 
     defaultProps = { wizards };
@@ -69,7 +77,7 @@ describe('(Component) HalcyonBreadcrumbs', function () {
       expect(breadcrumbs).to.have.length.gt(0);
     });
 
-    describe('Breadcrumb Data Item', function () {
+    describe('Breadcrumb Data', function () {
       it('Should be an object.', function () {
         breadcrumbs.forEach(x => {
           expect(x).to.be.an('object');
@@ -101,12 +109,16 @@ describe('(Component) HalcyonBreadcrumbs', function () {
       });
 
       it('Should not close the wizard of the clicked breadcrumb.', function () {
-        console.log(breadcrumbs);
+        _mockWizardCloseSpy.should.not.have.been.called;
+
         TestUtils.Simulate.click(breadcrumbs[0]);
-        expect(getStoreState().wizards).to.have.length(1);
+        _mockWizardCloseSpy.should.not.have.been.called;
+        expect(getStoreState().halcyon.size).to.equal(1);
+
 
         TestUtils.Simulate.click(breadcrumbs[1]);
-        expect(getStoreState().wizards).to.have.length(1);
+        _mockWizardCloseSpy.should.not.have.been.called;
+        expect(getStoreState().halcyon.size).to.equal(1);
       });
     });
   });
