@@ -40,6 +40,9 @@ describe('(Component) HalcyonWizard', function () {
     shallowRenderer.render(<HalcyonWizard {...props} />);
     component = shallowRenderer.getRenderOutput();
     rendered  = TestUtils.renderIntoDocument(<HalcyonWizard {...props} />);
+
+    // force reset spies
+    for (prop in spies) { spies[prop].reset(); }
   });
 
 
@@ -178,11 +181,101 @@ describe('(Component) HalcyonWizard', function () {
   });
 
   describe('(Method) setModel', function () {
+    it('Should dispatch an action.', function () {
+      spies.dispatch.should.not.have.been.called;
 
+      rendered.setModel();
+
+      const args = spies.dispatch.args[0];
+      expect(args[0]).to.be.an('object');
+      expect(args[0]).to.have.property('type');
+      expect(args[0]).to.have.property('payload');
+      spies.dispatch.should.have.been.called;
+    });
+
+    it('Should dispatch an action of type "HALCYON_WIZARD_SET_MODEL".', function () {
+      rendered.setModel();
+
+      const args = spies.dispatch.args[0];
+      expect(args[0]).to.have.property('type', 'HALCYON_WIZARD_SET_MODEL');
+    });
+
+    it('Should convert a POJO into an Immutable object.', function () {
+      let args;
+
+      // Verify conversion from {} -> Immutable.Map
+      rendered.setModel({});
+
+      args = spies.dispatch.args[0];
+      expect(Immutable.Map.isMap(args[0].payload.model)).to.be.true;
+
+      // Verify conversion from [] -> Immutable.List
+      spies.dispatch.reset();
+      rendered.setModel([]);
+
+      args = spies.dispatch.args[0];
+      expect(Immutable.List.isList(args[0].payload.model)).to.be.true;
+    });
+  });
+
+  describe('(Lifecycle) renderBreadcrumbs', function () {
+
+    it('Should check the wizard active state.', function () {
+      let isActive = rendered.isActive = sinon.spy();
+
+      isActive.should.not.have.been.called;
+      rendered.renderBreadcrumbs();
+      isActive.should.have.been.called;
+    });
+
+    it('Should return null if the wizard is inactive.', function () {
+      rendered.isActive = () => false;
+
+      const result = rendered.renderBreadcrumbs();
+      expect(result).to.be.null;
+    });
+  });
+
+  describe('(Lifecycle) renderSidebar', function () {
+
+    it('Should check the wizard active state.', function () {
+      let isActive = rendered.isActive = sinon.spy();
+
+      isActive.should.not.have.been.called;
+      rendered.renderSidebar();
+      isActive.should.have.been.called;
+    });
+
+    it('Should return null if the wizard is inactive.', function () {
+      rendered.isActive = () => false;
+
+      const result = rendered.renderSidebar();
+      expect(result).to.be.null;
+    });
+  });
+
+  describe('(Lifecycle) renderViewportFooter', function () {
+
+    it('Should check the wizard active state.', function () {
+      let isActive = rendered.isActive = sinon.spy();
+
+      isActive.should.not.have.been.called;
+      rendered.renderViewportFooter();
+      isActive.should.have.been.called;
+    });
+
+    it('Should return null if the wizard is inactive.', function () {
+      rendered.isActive = () => false;
+
+      const result = rendered.renderViewportFooter();
+      expect(result).to.be.null;
+    });
   });
 
   describe('(Lifecycle) Render', function () {
-
+    it('Should render as a <div>.', function () {
+      expect(component.type).to.equal('div');
+    });
   });
 });
 
