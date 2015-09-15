@@ -175,7 +175,6 @@ describe('(Component) HalcyonWizard', function () {
 
       expect(_instance.test()).equal('hello');
     });
-
   });
 
   describe('(Method) setModel', function () {

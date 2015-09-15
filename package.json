@@ -25,6 +25,7 @@
   "homepage": "https://github.com/davezuko/halcyon#readme",
   "dependencies": {
     "immutable": "^3.7.4",
+    "invariant": "^2.1.0",
     "react": "0.14.0-rc1",
     "react-dom": "0.14.0-rc1",
     "react-redux": "^1.0.1",
@@ -37,6 +38,7 @@
     "html-webpack-plugin": "^1.5.2",
     "karma": "^0.13.8",
     "karma-chai": "^0.1.0",
+    "karma-coverage": "^0.5.2",
     "karma-mocha": "^0.2.0",
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-sinon-chai": "^1.0.0",

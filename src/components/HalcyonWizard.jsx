@@ -2,6 +2,7 @@ import React                  from 'react';
 import Immutable              from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect }            from 'react-redux';
+import invariant              from 'invariant';
 import * as WizardActions     from '../actions/wizard';
 import HalcyonViewportFooter  from './HalcyonViewportFooter';
 import HalcyonStepSelector    from './HalcyonStepSelector';
@@ -195,11 +196,8 @@ export class HalcyonWizard extends React.Component {
   getSteps () {
     const steps = this.props.children;
 
-    if (steps) {
-      return Array.isArray(steps) ? steps : [steps];
-    } else {
-      return [];
-    }
+    invariant(!steps, 'A HalcyonWizard must include at least one step.');
+    return Array.isArray(steps) ? steps : [steps];
   }
 
   /**
