@@ -88,7 +88,6 @@ export class HalcyonWizard extends React.Component {
   }
   /* eslint-enable */
 
-  // TODO: check if already immutable
   setModel (model) {
     this._actions.setWizardModel(Immutable.fromJS(model));
   }
@@ -100,9 +99,10 @@ export class HalcyonWizard extends React.Component {
     this.bindActionCreatorsToSelf(WizardActions);
     this._actions.createWizard(Immutable.fromJS(this.props.model));
 
-    if (!this.getSteps().length) {
-      debug.warn('Halcyon Wizard must have at least one child component.');
-    }
+    invariant(
+      this.props.children,
+      'A HalcyonWizard must include at least one step.'
+    );
   }
 
   componentWillUpdate (nextProps) {
@@ -196,7 +196,6 @@ export class HalcyonWizard extends React.Component {
   getSteps () {
     const steps = this.props.children;
 
-    invariant(!steps, 'A HalcyonWizard must include at least one step.');
     return Array.isArray(steps) ? steps : [steps];
   }
 
