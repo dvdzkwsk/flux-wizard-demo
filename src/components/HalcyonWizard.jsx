@@ -253,7 +253,7 @@ export class HalcyonWizard extends React.Component {
     // aren't disabled). If there is at least one available previous step,
     // then allow backward navigation.
     const availablePreviousSteps = this.getSteps()
-      .filter((step, idx) => idx < stepIdx && !step.props.disabled)
+      .filter((step, idx) => idx < stepIdx && !step.props.disabled);
 
     return availablePreviousSteps.length > 0;
   }
