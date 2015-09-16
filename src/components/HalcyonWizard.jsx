@@ -66,10 +66,9 @@ export class HalcyonWizard extends React.Component {
   *
   * // you can do:
   * this.bindActionCreatorsToSelf(actions);
-  * this.foo(...);
-  * @param {object} actions - object that defines a map of functions where
+  * this._actions.foo(...);
+  * @param {Object} actions - object that defines a map of functions where
   * the key is the function name and the value is its definition.
-  * @returns {object} returns `this` for chainability.
   */
   bindActionCreatorsToSelf (actions) {
     const boundActions = bindActionCreators(actions, this.props.dispatch);
@@ -85,7 +84,6 @@ export class HalcyonWizard extends React.Component {
         );
       }
     }
-    return this;
   }
   /* eslint-enable */
 
