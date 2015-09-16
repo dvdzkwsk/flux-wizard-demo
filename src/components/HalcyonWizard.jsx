@@ -106,19 +106,6 @@ export class HalcyonWizard extends React.Component {
     );
   }
 
-  componentDidUpdate (prevProps) {
-    const prevState = prevProps.wizards.find(w => w.get('instance') === this);
-
-    // If the model has changed, invoke the onModelChange hook.
-    if (
-      prevState &&
-      typeof this.props.onModelChange === 'function' &&
-      this._state.get('model') !== prevState.get('model')
-    ) {
-      this.props.onModelChange(this._state.get('model').toJS());
-    }
-  }
-
   componentWillUpdate (nextProps) {
     this._state = nextProps.wizards.find(w => w.get('instance') === this);
 
@@ -135,6 +122,19 @@ export class HalcyonWizard extends React.Component {
       this.props.stepIndex !== nextProps.stepIndex
     ) {
       this._actions.changeWizardStep(nextProps.stepIndex);
+    }
+  }
+
+  componentDidUpdate (prevProps) {
+    const prevState = prevProps.wizards.find(w => w.get('instance') === this);
+
+    // If the model has changed, invoke the onModelChange hook.
+    if (
+      prevState &&
+      typeof this.props.onModelChange === 'function' &&
+      this._state.get('model') !== prevState.get('model')
+    ) {
+      this.props.onModelChange(this._state.get('model').toJS());
     }
   }
 

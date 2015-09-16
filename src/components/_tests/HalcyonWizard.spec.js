@@ -384,13 +384,5 @@ describe('(Connected Component) HalcyonWizard', function () {
         expect(_next.attributes.disabled).to.not.exist;
       });
     });
-
-    it('Should disable previous button when on first step.', function () {
-
-    });
-
-    it('Should enable previous button when not on first step.', function () {
-
-    });
   });
 });
