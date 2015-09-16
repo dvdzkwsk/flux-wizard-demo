@@ -164,6 +164,22 @@ describe('(Decorator) halcyonStep', function () {
         expect(rendered).to.have.property('bindTo');
         expect(rendered.bindTo).to.be.a('function');
       });
+
+      it('Should throw if no argument is supplied.', function () {
+        expect(rendered.bindTo).to.throw;
+      });
+
+      it('Should return an object.', function () {
+        expect(rendered.bindTo([])).to.be.an('object');
+      });
+
+      it('Should have return an object with a property "value".', function () {
+        expect(rendered.bindTo([])).to.have.property('value');
+      });
+
+      it('Should return an object with a function "onChange".', function () {
+        expect(rendered.bindTo([]).onChange).to.be.a('function');
+      });
     });
 
     describe('(Method) setProperty', function () {

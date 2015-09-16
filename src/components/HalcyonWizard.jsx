@@ -115,12 +115,18 @@ export class HalcyonWizard extends React.Component {
       typeof this.props.onModelChange === 'function' &&
       this._state.get('model') !== prevState.get('model')
     ) {
-      this.props.onModelChange(this._state.get('model'));
+      this.props.onModelChange(this._state.get('model').toJS());
     }
   }
 
   componentWillUpdate (nextProps) {
     this._state = nextProps.wizards.find(w => w.get('instance') === this);
+
+    invariant(
+      this._state,
+      'Wizard update received but no reference was found for it in the ' +
+      'Redux store. Make sure your component instance did not change.'
+    );
 
     // If Wizard component receives a new stepIndex override, then update
     // the internal step index.

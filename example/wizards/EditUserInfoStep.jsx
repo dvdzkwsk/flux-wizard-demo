@@ -30,22 +30,17 @@ export default class EditUserInfoStep extends React.Component {
       <div>
         <div className='form-group'>
           <label>First Name</label>
-          <input className='form-control'
-                 value={model.firstName}
-                 onChange={this.props.bindTo('firstName')} />
+          <input className='form-control' {...this.props.bindTo('firstName')} />
         </div>
         <div className='form-group'>
           <label>Last Name</label>
-          <input className='form-control'
-                 value={model.lastName}
-                 onChange={this.props.bindTo('lastName')}/>
+          <input className='form-control' {...this.props.bindTo('lastName')} />
         </div>
         <div className='form-group'>
           <label>Age</label>
           <input type='number'
                  className='form-control'
-                 value={model.age}
-                 onChange={this.props.bindTo('age')}/>
+                 {...this.props.bindTo('age')} />
         </div>
       </div>
     );

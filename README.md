@@ -192,10 +192,10 @@ FAQ
 Todo
 ----
 * [ ] Wizard support for Immutable.Map/Immutable.List models
-* [ ] Implement support for Wizard `onModelChange` hook
 * [ ] Exporting of wizard state + actions for test reproduction
 * [ ] Prevent navigation to a disabled step
   * [ ] Next/Previous need to skip disabled steps
   * [ ] Step selector needs to indicate disabled steps
-* halcyonDecorator could probably do something similar to `@connect`
+* [ ] halcyonDecorator could probably do something similar to `@connect`
 * [ ] Refactor tests when time allows
+* [ ] Wizards should ideally not rely on a component instance

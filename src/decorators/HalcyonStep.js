@@ -61,7 +61,10 @@ function createStepComponent (name, Component) {
     bindTo (path) {
       const pathArr = Array.isArray(path) ? path : path.split('.');
 
-      return (e) => this.setProperty(pathArr, e.target.value);
+      return {
+        value    : this.state.model.getIn(pathArr),
+        onChange : (e) => this.setProperty(pathArr, e.target.value)
+      };
     }
 
     resetModel () {

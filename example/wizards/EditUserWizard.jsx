@@ -2,7 +2,6 @@ import React               from 'react';
 import EditUserInfoStep    from './EditUserInfoStep';
 import EditUserFriendsStep from './EditUserFriendsStep';
 import { HalcyonWizard }   from '../../src';
-import * as debug          from '../../src/lib/debug';
 
 export default class EditUserWizard extends React.Component {
   static propTypes = {
@@ -22,19 +21,16 @@ export default class EditUserWizard extends React.Component {
   }
 
   _onModelChange (model) {
-    debug.log('model change received', model);
+    console.log('model change received', model);
   }
 
   // do some mock async validation
   _onSubmit (model) {
-    setTimeout(() => {
-      if (model.age < 30) {
-        debug.error('Woah, server says users actually have to be at least 30!');
-        this.setState({
-          stepOverride : 0
-        });
-      }
-    }, 1000);
+    console.log('OLD MODEL');
+    console.log(this.props.model);
+
+    console.log('NEW MODEL');
+    console.log(model);
   }
 
   _onCancel () {}
