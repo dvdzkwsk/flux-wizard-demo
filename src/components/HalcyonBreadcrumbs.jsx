@@ -38,15 +38,23 @@ export class HalcyonBreadcrumbs extends React.Component {
 
     if (wizardsThatCantClose.size) {
       debug.warn(
-        `Cannot navigate to the target breadcrumb because ` +
-        `${wizardsThatCantClose.size} are unable to close.`,
-        wizardsThatCantClose
+        `Cannot navigate to the target wizard because %s wizards ahead ` +
+        `of the target are unable to close.`,
+        wizardsThatCantClose.size
       );
     } else {
       wizardsThatNeedToClose.forEach(w => w.get('instance')._onCancel());
     }
   }
 
+  /**
+  * @param {Immutable.List<Immutable.Map>} wizards - global wizard state
+  *
+  * @returns {Array} list of objects with data needed to render breadcrumbs,
+  * includes "title" for the friendly name of the breadcrumb (references
+  * either the step or the wizard) and "instance" which is a ref to the
+  * target wizard component.
+  */
   getBreadcrumbsForWizards (wizards) {
     return wizards
       .flatMap(wizard => {

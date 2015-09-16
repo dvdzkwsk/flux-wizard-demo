@@ -21,6 +21,10 @@ export default class EditUserWizard extends React.Component {
     };
   }
 
+  _onModelChange (model) {
+    debug.log('model change received', model);
+  }
+
   // do some mock async validation
   _onSubmit (model) {
     setTimeout(() => {
@@ -41,7 +45,8 @@ export default class EditUserWizard extends React.Component {
                      model={this.props.model}
                      stepIndex={this.state.stepOverride}
                      onSubmit={::this._onSubmit}
-                     onCancel={::this._onCancel}>
+                     onCancel={::this._onCancel}
+                     onModelChange={::this._onModelChange}>
         <EditUserInfoStep />
         <EditUserFriendsStep />
       </HalcyonWizard>
