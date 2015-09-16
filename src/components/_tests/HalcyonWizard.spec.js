@@ -2,6 +2,7 @@ import React     from 'react';
 import Immutable from 'immutable';
 import TestUtils from 'react-addons-test-utils';
 import * as wizardActions from '../../actions/wizard';
+import { createMockWizard, getStoreState } from './_mock-wizard';
 import {
   activeWizardOnly,
   HalcyonWizard,
@@ -12,29 +13,21 @@ import {
 // Base HalcyonWizard Component Tests
 // ------------------------------------
 describe('(Component) HalcyonWizard', function () {
-  let instance, state, props, component, rendered, spies;
+  let component, rendered, spies;
 
 
   beforeEach(function () {
     const shallowRenderer = TestUtils.createRenderer();
+    const model  = { foo : 'bar' };
 
-    spies    = {};
-    model    = { foo : 'bar' };
-    instance = {};
-    state    = {
-      depth     : 0,
-      stepIndex : 0,
-      instance  : instance,
-      model     : Immutable.fromJS(model)
-    };
-
-    props = {
+    spies  = {};
+    props  = {
       children : ['A', 'B'].map(x => <h1>{x}</h1>),
-      halcyon  : Immutable.List([state]),
       dispatch : (spies.dispatch = sinon.spy()),
       onSubmit : (spies.onSubmit = sinon.spy()),
       onCancel : (spies.onCancel = sinon.spy()),
-      model    : model
+      model    : model,
+      wizards  : Immutable.List()
     };
 
     shallowRenderer.render(<HalcyonWizard {...props} />);
@@ -283,5 +276,121 @@ describe('(Component) HalcyonWizard', function () {
 // Connected HalcyonWizard Tests
 // ------------------------------------
 describe('(Connected Component) HalcyonWizard', function () {
+  let _rendered, _component, _props, _spies, _model;
 
+  beforeEach(function () {
+    const MockWizard = createMockWizard();
+
+    _spies = {};
+    _props = {
+      dispatch : (_spies.dispatch = sinon.spy()),
+      onSubmit : (_spies.onSubmit = sinon.spy()),
+      onCancel : (_spies.onCancel = sinon.spy()),
+      model    : (_model = { foo : 'bar' })
+    };
+
+    const container = TestUtils.renderIntoDocument(<MockWizard {..._props} />);
+    _rendered = TestUtils.findRenderedComponentWithType(container, HalcyonWizard);
+  });
+
+  it('Should create a wizard entry in the global Halcyon state.', function () {
+    const state = getStoreState().halcyon;
+
+    expect(state.size).to.equal(1);
+  });
+
+  it('Should have a local state reference that matches its global state.', function () {
+    const state = getStoreState().halcyon;
+
+    expect(Immutable.Map.isMap(_rendered._state)).to.be.true;
+    expect(_rendered._state).to.equal(getStoreState().halcyon.first());
+  });
+
+  it('Should be active.', function () {
+    expect(_rendered.isActive()).to.be.true;
+  });
+
+  describe('(Lifecycle) Render', function () {
+    it('(meta) should have two steps.', function () {
+      expect(_rendered.props.children).to.have.length(2);
+    });
+
+    it('Should render with an active class.', function () {
+      const active = TestUtils.findRenderedDOMComponentWithClass(_rendered, 'halcyon-wizard--active');
+
+      expect(active).to.exist;
+    });
+
+    describe('(Viewport) Step', function () {
+      it('Should exist.', function () {
+        const vp = TestUtils.findRenderedDOMComponentWithClass(
+          _rendered, 'halcyon-wizard__viewport__step'
+        );
+
+        expect(vp).to.exist;
+      });
+    });
+
+    describe('(Button) Previous', function () {
+      let _prev;
+
+      beforeEach(function () {
+        const btns = TestUtils.scryRenderedDOMComponentsWithTag(_rendered, 'button');
+        _prev = btns.filter(btn => /Previous/.test(btn.textContent))[0];
+      });
+
+      it('Should exist.', function () {
+        expect(_prev).to.exist;
+      });
+
+      it('Should be disabled when wizard cannot navigate backward.', function () {
+        _rendered.canNavigateBackward = () => false;
+
+        _rendered.forceUpdate();
+        expect(_prev.attributes.disabled).to.exist;
+      });
+
+      it('Should be enabled when wizard can navigate backward.', function () {
+        _rendered.canNavigateBackward = () => true;
+
+        _rendered.forceUpdate();
+        expect(_prev.attributes.disabled).to.not.exist;
+      });
+    });
+
+    describe('(Button) Next', function () {
+      let _next;
+
+      beforeEach(function () {
+        const btns = TestUtils.scryRenderedDOMComponentsWithTag(_rendered, 'button');
+        _next = btns.filter(btn => /Next/.test(btn.textContent))[0];
+      });
+
+      it('Should exist.', function () {
+        expect(_next).to.exist;
+      });
+
+      it('Should be disabled when wizard cannot navigate forward.', function () {
+        _rendered.canNavigateForward = () => false;
+
+        _rendered.forceUpdate();
+        expect(_next.attributes.disabled).to.exist;
+      });
+
+      it('Should be enabled when wizard can navigate forward.', function () {
+        _rendered.canNavigateForward = () => true;
+
+        _rendered.forceUpdate();
+        expect(_next.attributes.disabled).to.not.exist;
+      });
+    });
+
+    it('Should disable previous button when on first step.', function () {
+
+    });
+
+    it('Should enable previous button when not on first step.', function () {
+
+    });
+  });
 });

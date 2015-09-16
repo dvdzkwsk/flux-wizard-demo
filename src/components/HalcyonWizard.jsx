@@ -124,8 +124,8 @@ export class HalcyonWizard extends React.Component {
 
     invariant(
       this._state,
-      'Wizard update received but no reference was found for it in the ' +
-      'Redux store. Make sure your component instance did not change.'
+      'Wizard component was updated but no reference was found for it in ' +
+      'the Redux store. Make sure your component instance did not change.'
     );
 
     // If Wizard component receives a new stepIndex override, then update

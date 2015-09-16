@@ -2,7 +2,7 @@ import Immutable  from 'immutable';
 import React      from 'react';
 import TestUtils  from 'react-addons-test-utils';
 import { HalcyonWizard } from '../../index';
-import { createMockWizardClass, getStoreState } from './_mock-wizard';
+import { createMockWizard, getStoreState } from './_mock-wizard';
 import {
   HalcyonBreadcrumbs,
   default as ConnectedHalcyonBreadcrumbs
@@ -39,7 +39,7 @@ describe('(Component) HalcyonBreadcrumbs', function () {
   };
 
   beforeEach(function () {
-    MockWizard = createMockWizardClass();
+    MockWizard = createMockWizard();
     _mockWizardCloseSpy  = sinon.spy();
     _mockWizardSubmitSpy = sinon.spy();
 
