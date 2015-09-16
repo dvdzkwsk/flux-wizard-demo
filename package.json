@@ -29,8 +29,8 @@
     "invariant": "^2.1.0",
     "react": "0.14.0-rc1",
     "react-dom": "0.14.0-rc1",
-    "react-redux": "^1.0.1",
-    "redux": "^1.0.1"
+    "react-redux": "^2.1.2",
+    "redux": "^3.0.0"
   },
   "devDependencies": {
     "babel": "^5.8.23",
@@ -50,6 +50,7 @@
     "phantomjs-polyfill": "0.0.1",
     "react-addons-test-utils": "^0.14.0-rc1",
     "react-hot-loader": "^1.2.7",
+    "redux-devtools": "^2.1.2",
     "webpack": "^1.9.11",
     "webpack-dev-server": "^1.9.0"
   }
