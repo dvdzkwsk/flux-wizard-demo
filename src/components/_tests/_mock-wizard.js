@@ -3,8 +3,8 @@ import { Provider }   from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 import { HalcyonWizard }   from '../../index';
 import * as reducers       from '../../reducers';
-import EditUserInfoStep    from '../../../example/wizards/EditUserInfoStep';
-import EditUserFriendsStep from '../../../example/wizards/EditUserFriendsStep';
+import EditUserInfoStep    from '../../../example/steps/EditUserInfoStep';
+import EditUserFriendsStep from '../../../example/steps/EditUserFriendsStep';
 
 var _store;
 

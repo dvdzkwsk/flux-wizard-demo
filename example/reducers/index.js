@@ -1,7 +1,5 @@
+import { combineReducers } from 'redux';
 import { reducers as HalcyonReducers } from '../../src';
-import userReducer from './user';
 
-export default {
-  ...HalcyonReducers,
-  user : userReducer
-};
+const reducers = { ...HalcyonReducers };
+export default combineReducers(reducers);

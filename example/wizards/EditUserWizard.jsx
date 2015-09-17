@@ -1,6 +1,6 @@
 import React               from 'react';
-import EditUserInfoStep    from './EditUserInfoStep';
-import EditUserFriendsStep from './EditUserFriendsStep';
+import EditUserInfoStep    from '../steps/EditUserInfoStep';
+import EditUserFriendsStep from '../steps/EditUserFriendsStep';
 import { HalcyonWizard }   from '../../src';
 
 export default class EditUserWizard extends React.Component {
