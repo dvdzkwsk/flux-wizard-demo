@@ -17,7 +17,6 @@ Table of Contents
     * [Hooks](#hooks)
 1. [Lifecycle](#lifecycle)
 1. [FAQ](#faq)
-1. [Todo](#todo)
 
 Features
 --------
@@ -47,7 +46,7 @@ Features
 Requirements
 ------------
 
-**Node**: iojs `^2.0.0` or node.js `^0.12.0`
+**Node**: Node.js `^4.0.0`
 
 **Build**: Build system capable of performing ES6 to ES5 transpilation. If you wish to use the decorator syntax (e.g. with `@halcyonStep`) you must enable support for it in your transpiler (Babel, Traceur).
 
@@ -132,7 +131,7 @@ class YourStep extends React.Component {
 
     return (
       <div>
-        <input value={model.firstName} onChange={this.bindTo('firstName')} />
+        <input {...this.bindTo('firstName')} />
       </div>
     );
   }
@@ -173,8 +172,8 @@ updated model
 */
 ```
 
-##### `bindTo : (String|Array) -> (Event -> Rerender)`
-Returns an event handler that, when invoked, will set the targeted property to `event.target.value`. Will use `setProperty` internally to apply the change.
+##### `bindTo : (String|Array) -> ({ onChange : (Event -> Rerender), value : * })`
+Returns an object to be applied to as attributes to an input. Contains the current value of the target property (as "value") and an event handler that will apply the event's target value to the model with onChange. Uses `setProperty` internally.
 
 **NOTE**: This method will trigger a re-render for your step.
 
@@ -188,14 +187,3 @@ Lifecycle
 
 FAQ
 ---
-
-Todo
-----
-* [ ] Wizard support for Immutable.Map/Immutable.List models
-* [ ] Exporting of wizard state + actions for test reproduction
-* [ ] Prevent navigation to a disabled step
-  * [ ] Next/Previous need to skip disabled steps
-  * [ ] Step selector needs to indicate disabled steps
-* [ ] halcyonDecorator could probably do something similar to `@connect`
-* [ ] Refactor tests when time allows
-* [ ] Wizards should ideally not rely on a component instance
