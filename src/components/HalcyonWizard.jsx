@@ -6,7 +6,7 @@ import invariant              from 'invariant';
 import classnames             from 'classnames';
 import * as WizardActions     from '../actions/wizard';
 import HalcyonViewportFooter  from './HalcyonViewportFooter';
-import HalcyonStepSelector    from './HalcyonStepSelector';
+import HalcyonWizardSidebar   from './HalcyonWizardSidebar';
 import HalcyonBreadcrumbs     from './HalcyonBreadcrumbs';
 import * as debug             from '../lib/debug';
 
@@ -36,7 +36,7 @@ export class HalcyonWizard extends React.Component {
     children      : React.PropTypes.oneOfType([
       React.PropTypes.element,
       React.PropTypes.arrayOf(React.PropTypes.element)
-    ]),
+    ]).isRequired,
     wizards       : React.PropTypes.object.isRequired,
     model         : React.PropTypes.object.isRequired,
     dispatch      : React.PropTypes.func.isRequired,
@@ -374,7 +374,6 @@ export class HalcyonWizard extends React.Component {
   }
 
   /**
-  * TODO: Refactor this into a HalcyonSidebar Component.
   * Renders the sidebar component iff the current wizard instance
   * is the active wizard.
   * @returns {DOM} Regular DOM element wrapping the HalcyonStepSelector.
@@ -382,10 +381,8 @@ export class HalcyonWizard extends React.Component {
   @activeWizardOnly
   renderSidebar () {
     return (
-      <div className='halcyon-wizard__sidebar'>
-        <HalcyonStepSelector steps={this.getSteps()}
-                             onSelect={::this.attemptToNavigateToIndex} />
-      </div>
+      <HalcyonWizardSidebar steps={this.getSteps()}
+                            onSelect={::this.attemptToNavigateToIndex} />
     );
   }
 
