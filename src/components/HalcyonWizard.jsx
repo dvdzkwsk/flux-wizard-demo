@@ -303,6 +303,8 @@ export class HalcyonWizard extends React.Component {
     if (this.isCurrentStepExitable()) {
       invariant(
         typeof this.props.onCancel === 'function',
+        'No onCancel method was provided to the wizard. Wizards will not ' +
+        'unmount themselves.'
       );
 
       this.props.onCancel();
