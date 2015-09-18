@@ -196,7 +196,7 @@ export class HalcyonWizard extends React.Component {
   * @param {Int} idx - Index of the target step.
   */
   attemptToNavigateToIndex (idx) {
-    if (this.shouldWizardNavigate()) {
+    if (!this.getSteps()[idx].props.disabled && this.shouldWizardNavigate()) {
       this.navigateToIndex(idx);
     }
   }
